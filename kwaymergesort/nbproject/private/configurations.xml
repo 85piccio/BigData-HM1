@@ -27,8 +27,15 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" ./</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" ./bigFile 0 0 0 </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" ./bigFile 0 0 0</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" ~/Scrivania/BIG DATA/externalSort/bigFile 0 0 0</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" ~/Scrivania/BIGDATA/externalSort/bigFile 0 0 0</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" /media/piccio/PENDRIVE/bigFile 0 0 0</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" /home/piccio/Scrivania/BIGDATA/externalSort/genFile 0 0 0</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" /home/piccio/Scrivania/BIGDATA/externalSort BigFile 10000 6 1</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" /home/piccio/Scrivania/BIGDATA/externalSort BigFile 10000 6 1 -v</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" ./bigFile 0 0 0</runcommand>
+        <runcommand>"${OUTPUT_PATH}" /home/piccio/Scrivania/BIGDATA/externalSort BigFile 10000 6 1 -v</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

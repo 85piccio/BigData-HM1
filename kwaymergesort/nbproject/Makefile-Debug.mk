@@ -57,11 +57,10 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kwaymergesort
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk kwaymergesort
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kwaymergesort: ${OBJECTFILES}
-	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kwaymergesort ${OBJECTFILES} ${LDLIBSOPTIONS}
+kwaymergesort: ${OBJECTFILES}
+	${LINK.c} -o kwaymergesort ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -79,7 +78,7 @@ ${OBJECTDIR}/multiwayMergesort.o: multiwayMergesort.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kwaymergesort
+	${RM} kwaymergesort
 
 # Subprojects
 .clean-subprojects:

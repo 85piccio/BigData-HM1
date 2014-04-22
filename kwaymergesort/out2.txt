@@ -1,0 +1,447 @@
+Run Formation started at: 0.1658s
+Run Formation ended at: 0.394388s
+Run Formation time: 0.392730s
+
+Merge started at: 0.394401s
+Merge ended at: 0.418277s
+Merge time: 0.23876s
+
+Merge started at: 0.418281s
+Merge ended at: 0.441243s
+Merge time: 0.22962s
+
+Merge started at: 0.441247s
+Merge ended at: 0.464326s
+Merge time: 0.23079s
+
+Merge started at: 0.464330s
+Merge ended at: 0.487962s
+Merge time: 0.23632s
+
+Merge started at: 0.487966s
+Merge ended at: 0.511672s
+Merge time: 0.23706s
+
+Merge started at: 0.511676s
+Merge ended at: 0.535534s
+Merge time: 0.23858s
+
+Merge started at: 0.535538s
+Merge ended at: 0.559270s
+Merge time: 0.23732s
+
+Merge started at: 0.559274s
+Merge ended at: 0.582946s
+Merge time: 0.23672s
+
+Merge started at: 0.582951s
+Merge ended at: 0.606627s
+Merge time: 0.23676s
+
+Merge started at: 0.606632s
+Merge ended at: 0.630097s
+Merge time: 0.23465s
+
+Merge started at: 0.630101s
+Merge ended at: 0.653862s
+Merge time: 0.23761s
+
+Merge started at: 0.653866s
+Merge ended at: 0.677616s
+Merge time: 0.23750s
+
+Merge started at: 0.677621s
+Merge ended at: 0.701317s
+Merge time: 0.23696s
+
+Merge started at: 0.701322s
+Merge ended at: 0.724970s
+Merge time: 0.23648s
+
+Merge started at: 0.724975s
+Merge ended at: 0.748702s
+Merge time: 0.23727s
+
+Merge started at: 0.748707s
+Merge ended at: 0.772646s
+Merge time: 0.23939s
+
+Merge started at: 0.772650s
+Merge ended at: 0.796357s
+Merge time: 0.23707s
+
+Merge started at: 0.796361s
+Merge ended at: 0.820034s
+Merge time: 0.23673s
+
+Merge started at: 0.820038s
+Merge ended at: 0.843781s
+Merge time: 0.23743s
+
+Merge started at: 0.843785s
+Merge ended at: 0.867411s
+Merge time: 0.23626s
+
+Merge started at: 0.867415s
+Merge ended at: 0.890898s
+Merge time: 0.23483s
+
+Merge started at: 0.890903s
+Merge ended at: 0.913213s
+Merge time: 0.22310s
+
+Merge started at: 0.913217s
+Merge ended at: 0.935719s
+Merge time: 0.22502s
+
+Merge started at: 0.935722s
+Merge ended at: 0.959048s
+Merge time: 0.23326s
+
+Merge started at: 0.959053s
+Merge ended at: 0.982751s
+Merge time: 0.23698s
+
+Merge started at: 0.982755s
+Merge ended at: 1.6457s
+Merge time: 1.-976298s
+
+Merge started at: 1.6462s
+Merge ended at: 1.30138s
+Merge time: 0.23676s
+
+Merge started at: 1.30142s
+Merge ended at: 1.53905s
+Merge time: 0.23763s
+
+Merge started at: 1.53909s
+Merge ended at: 1.77590s
+Merge time: 0.23681s
+
+Merge started at: 1.77595s
+Merge ended at: 1.100717s
+Merge time: 0.23122s
+
+Merge started at: 1.100721s
+Merge ended at: 1.123357s
+Merge time: 0.22636s
+
+Merge started at: 1.123361s
+Merge ended at: 1.145587s
+Merge time: 0.22226s
+
+Merge started at: 1.145591s
+Merge ended at: 1.168072s
+Merge time: 0.22481s
+
+Merge started at: 1.168076s
+Merge ended at: 1.191710s
+Merge time: 0.23634s
+
+Merge started at: 1.191714s
+Merge ended at: 1.215402s
+Merge time: 0.23688s
+
+Merge started at: 1.215406s
+Merge ended at: 1.238979s
+Merge time: 0.23573s
+
+Merge started at: 1.238983s
+Merge ended at: 1.262718s
+Merge time: 0.23735s
+
+Merge started at: 1.262723s
+Merge ended at: 1.286413s
+Merge time: 0.23690s
+
+Merge started at: 1.286418s
+Merge ended at: 1.309086s
+Merge time: 0.22668s
+
+Merge started at: 1.309090s
+Merge ended at: 1.332679s
+Merge time: 0.23589s
+
+Merge started at: 1.332683s
+Merge ended at: 1.356296s
+Merge time: 0.23613s
+
+Merge started at: 1.356301s
+Merge ended at: 1.380591s
+Merge time: 0.24290s
+
+Merge started at: 1.380595s
+Merge ended at: 1.404010s
+Merge time: 0.23415s
+
+Merge started at: 1.404014s
+Merge ended at: 1.426242s
+Merge time: 0.22228s
+
+Merge started at: 1.426246s
+Merge ended at: 1.449671s
+Merge time: 0.23425s
+
+Merge started at: 1.449675s
+Merge ended at: 1.472868s
+Merge time: 0.23193s
+
+Merge started at: 1.472873s
+Merge ended at: 1.496248s
+Merge time: 0.23375s
+
+Merge started at: 1.496252s
+Merge ended at: 1.519735s
+Merge time: 0.23483s
+
+Merge started at: 1.519738s
+Merge ended at: 1.542986s
+Merge time: 0.23248s
+
+Merge started at: 1.542989s
+Merge ended at: 1.566367s
+Merge time: 0.23378s
+
+Merge started at: 1.566370s
+Merge ended at: 1.589770s
+Merge time: 0.23400s
+
+Merge started at: 1.589773s
+Merge ended at: 1.613103s
+Merge time: 0.23330s
+
+Merge started at: 1.613107s
+Merge ended at: 1.636475s
+Merge time: 0.23368s
+
+Merge started at: 1.636479s
+Merge ended at: 1.659863s
+Merge time: 0.23384s
+
+Merge started at: 1.659866s
+Merge ended at: 1.683231s
+Merge time: 0.23365s
+
+Merge started at: 1.683235s
+Merge ended at: 1.706623s
+Merge time: 0.23388s
+
+Merge started at: 1.706627s
+Merge ended at: 1.730030s
+Merge time: 0.23403s
+
+Merge started at: 1.730033s
+Merge ended at: 1.753414s
+Merge time: 0.23381s
+
+Merge started at: 1.753417s
+Merge ended at: 1.776625s
+Merge time: 0.23208s
+
+Merge started at: 1.776628s
+Merge ended at: 1.799987s
+Merge time: 0.23359s
+
+Merge started at: 1.799990s
+Merge ended at: 1.823308s
+Merge time: 0.23318s
+
+Merge started at: 1.823311s
+Merge ended at: 1.846641s
+Merge time: 0.23330s
+
+Merge started at: 1.846644s
+Merge ended at: 1.869998s
+Merge time: 0.23354s
+
+Merge started at: 1.870002s
+Merge ended at: 1.893353s
+Merge time: 0.23351s
+
+Merge started at: 1.893356s
+Merge ended at: 1.916641s
+Merge time: 0.23285s
+
+Merge started at: 1.916644s
+Merge ended at: 1.940041s
+Merge time: 0.23397s
+
+Merge started at: 1.940044s
+Merge ended at: 1.963448s
+Merge time: 0.23404s
+
+Merge started at: 1.963451s
+Merge ended at: 1.986857s
+Merge time: 0.23406s
+
+Merge started at: 1.986861s
+Merge ended at: 2.9651s
+Merge time: 1.-977210s
+
+Merge started at: 2.9653s
+Merge ended at: 2.32555s
+Merge time: 0.22902s
+
+Merge started at: 2.32559s
+Merge ended at: 2.55892s
+Merge time: 0.23333s
+
+Merge started at: 2.55895s
+Merge ended at: 2.79283s
+Merge time: 0.23388s
+
+Merge started at: 2.79286s
+Merge ended at: 2.102620s
+Merge time: 0.23334s
+
+Merge started at: 2.102623s
+Merge ended at: 2.125980s
+Merge time: 0.23357s
+
+Merge started at: 2.125982s
+Merge ended at: 2.149351s
+Merge time: 0.23369s
+
+Merge started at: 2.149354s
+Merge ended at: 2.172770s
+Merge time: 0.23416s
+
+Merge started at: 2.172773s
+Merge ended at: 2.196161s
+Merge time: 0.23388s
+
+Merge started at: 2.196164s
+Merge ended at: 2.219571s
+Merge time: 0.23407s
+
+Merge started at: 2.219574s
+Merge ended at: 2.242865s
+Merge time: 0.23291s
+
+Merge started at: 2.242868s
+Merge ended at: 2.266242s
+Merge time: 0.23374s
+
+Merge started at: 2.266246s
+Merge ended at: 2.289678s
+Merge time: 0.23432s
+
+Merge started at: 2.289680s
+Merge ended at: 2.313020s
+Merge time: 0.23340s
+
+Merge started at: 2.313023s
+Merge ended at: 2.336389s
+Merge time: 0.23366s
+
+Merge started at: 2.336392s
+Merge ended at: 2.359756s
+Merge time: 0.23364s
+
+Merge started at: 2.359760s
+Merge ended at: 2.383209s
+Merge time: 0.23449s
+
+Merge started at: 2.383212s
+Merge ended at: 2.406578s
+Merge time: 0.23366s
+
+Merge started at: 2.406581s
+Merge ended at: 2.429946s
+Merge time: 0.23365s
+
+Merge started at: 2.429950s
+Merge ended at: 2.453339s
+Merge time: 0.23389s
+
+Merge started at: 2.453342s
+Merge ended at: 2.476739s
+Merge time: 0.23397s
+
+Merge started at: 2.476742s
+Merge ended at: 2.500097s
+Merge time: 0.23355s
+
+Merge started at: 2.500100s
+Merge ended at: 2.523481s
+Merge time: 0.23381s
+
+Merge started at: 2.523485s
+Merge ended at: 2.546758s
+Merge time: 0.23273s
+
+Merge started at: 2.546761s
+Merge ended at: 2.570183s
+Merge time: 0.23422s
+
+Merge started at: 2.570186s
+Merge ended at: 2.593589s
+Merge time: 0.23403s
+
+Merge started at: 2.593592s
+Merge ended at: 2.617040s
+Merge time: 0.23448s
+
+Merge started at: 2.617045s
+Merge ended at: 2.640510s
+Merge time: 0.23465s
+
+Merge started at: 2.640514s
+Merge ended at: 2.664021s
+Merge time: 0.23507s
+
+Merge started at: 2.664026s
+Merge ended at: 2.687994s
+Merge time: 0.23968s
+
+Merge started at: 2.687998s
+Merge ended at: 2.711773s
+Merge time: 0.23775s
+
+Merge started at: 2.711778s
+Merge ended at: 2.735271s
+Merge time: 0.23493s
+
+Merge started at: 2.735278s
+Merge ended at: 2.953500s
+Merge time: 0.218222s
+
+Merge started at: 2.953505s
+Merge ended at: 3.170450s
+Merge time: 1.-783055s
+
+Merge started at: 3.170454s
+Merge ended at: 3.388419s
+Merge time: 0.217965s
+
+Merge started at: 3.388424s
+Merge ended at: 3.610034s
+Merge time: 0.221610s
+
+Merge started at: 3.610039s
+Merge ended at: 3.832164s
+Merge time: 0.222125s
+
+Merge started at: 3.832164s
+Merge ended at: 4.52228s
+Merge time: 1.-779936s
+
+Merge started at: 4.52233s
+Merge ended at: 4.272831s
+Merge time: 0.220598s
+
+Merge started at: 4.272837s
+Merge ended at: 4.491663s
+Merge time: 0.218826s
+
+Merge started at: 4.491669s
+Merge ended at: 4.711710s
+Merge time: 0.220041s
+
+Merge started at: 4.711715s
+Merge ended at: 4.931516s
+Merge time: 0.219801s
+
+Merge started at: 4.931526s
+Merge ended at: 7.249919s
+Merge time: 3.-681607s

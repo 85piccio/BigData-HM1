@@ -2,7 +2,7 @@
  *  kWayMergeSort 
  * ============================================================================
  *  Irene Finocchi (finocchi@di.uniroma1.it)
-*/
+ */
 
 #define __MAC__
 
@@ -19,6 +19,8 @@
 #include "multiwayMergesort.h"
 #include <string.h>
 #include <stdio.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #ifdef __MAC__
 
@@ -34,26 +36,26 @@
 
 /* local data types */
 typedef struct {
-    FILE*  src;               /* source file */
-    FILE*  des;               /* destination file */
-    size_t numSwaps;          /* number of swaps of src and des files */
+    FILE* src; /* source file */
+    FILE* des; /* destination file */
+    size_t numSwaps; /* number of swaps of src and des files */
 
-    off64_t  N;               /* number of items to be sorted */
-    size_t itemSize;          /* item size in bytes */
+    off64_t N; /* number of items to be sorted */
+    size_t itemSize; /* item size in bytes */
 
-    size_t k;                 /* k ways of merging operations */
-    size_t B;                 /* block size in bytes */
+    size_t k; /* k ways of merging operations */
+    size_t B; /* block size in bytes */
 
-    size_t M;     			  /* size in bytes of internal memory used to cache blocks
+    size_t M; /* size in bytes of internal memory used to cache blocks
     							 M = k x B */
 
-    char*  itemCache;         /* main memory cache containing k blocks of items */   
-    off64_t* offset;          /* table of file offsets within runs to be merged */
+    char* itemCache; /* main memory cache containing k blocks of items */
+    off64_t* offset; /* table of file offsets within runs to be merged */
 
-    int (*compare)(const void*, const void*); 	/* item comparator */
+    int (*compare)(const void*, const void*); /* item comparator */
 
-    int    verb;              /* verbose flag */
-    int    errCode;           /* operation error code */
+    int verb; /* verbose flag */
+    int errCode; /* operation error code */
 } Data;
 
 /* table of error messages */
@@ -68,16 +70,18 @@ char* ErrTable[] = {
 };
 
 /* static function prototypes */
-static int 	  inMemSort		 (Data* d);
-static int 	  kWayMergeSort	 (Data *d);
-static void   swapFiles		 (Data* d);
-static int    runFormation	 (Data* d);
-static int    sortPasses	 (Data* d);
-static int    kMerge		 (Data* d, off64_t r, off64_t j);
-static int    initRuns       (Data* d, off64_t r, off64_t j);
-static size_t getMinRun      (Data* d, off64_t r, off64_t j);
-static int    nextFrontItem  (Data* d, off64_t r, off64_t j, size_t q);
-static int    copyBack       (Data* d);
+static int inMemSort(Data* d);
+static int kWayMergeSort(Data *d);
+static void swapFiles(Data* d);
+static int runFormation(Data* d);
+static int sortPasses(Data* d);
+static int kMerge(Data* d, off64_t r, off64_t j);
+static int initRuns(Data* d, off64_t r, off64_t j);
+static size_t getMinRun(Data* d, off64_t r, off64_t j);
+static int nextFrontItem(Data* d, off64_t r, off64_t j, size_t q);
+static int copyBack(Data* d);
+//HM1
+struct timeval timevaldiff(struct timeval *a, struct timeval *b);
 
 /* macros */
 #define		  _EmptyRun(d,r,j,q)  ( (d)->offset[q] >= (d)->N || 			\
@@ -100,20 +104,23 @@ static int    copyBack       (Data* d);
  * k: number of blocks of items that can be cached in main memory
  * verbose: if nonzero, output sorting progress to stderr
  * return 0 upon successful completion, error code otherwise.
-*/
-int sort(	const char* pathName, size_t itemSize,
-			int (*compare)(const void*, const void*),
-            size_t blockSize, size_t k, size_t externalFlag, int verbose) {
+ */
+int sort(const char* pathName, size_t itemSize,
+        int (*compare)(const void*, const void*),
+        size_t blockSize, size_t k, size_t externalFlag, int verbose) {
 
-    Data  d = { 0 };
+    Data d = {0};
     off64_t theFileSize;
 
     /* reset error code */
     d.errCode = 0;
 
     /* attempt to open input file for update (reading and writing) */
-    d.src = fopen64(pathName,"r+");
-    if (d.src == NULL) { d.errCode = CANT_OPEN_FILE; goto cleanup; }
+    d.src = fopen64(pathName, "r+");
+    if (d.src == NULL) {
+        d.errCode = CANT_OPEN_FILE;
+        goto cleanup;
+    }
 
     /* get input file size */
     fseeko64(d.src, 0, SEEK_END);
@@ -121,14 +128,17 @@ int sort(	const char* pathName, size_t itemSize,
     fseeko64(d.src, 0, SEEK_SET);
 
     /* check if file size is a multiple of inItemSize */
-    if (theFileSize % itemSize != 0) { d.errCode = WRONG_FILE_SIZE; goto cleanup; }
+    if (theFileSize % itemSize != 0) {
+        d.errCode = WRONG_FILE_SIZE;
+        goto cleanup;
+    }
 
     /* setup number of file items (N) */
     d.N = theFileSize / itemSize;
 
     /* setup item size */
     d.itemSize = itemSize;
-   
+
     /* setup item comparator */
     d.compare = compare;
 
@@ -136,70 +146,77 @@ int sort(	const char* pathName, size_t itemSize,
     d.verb = verbose;
 
     if (externalFlag) {
-	    /* init number of swaps */
-    	d.numSwaps = 0;
+        /* init number of swaps */
+        d.numSwaps = 0;
 
-	    /* setup block size (B) */
-    	d.B = blockSize;
-	
-    	/* setup number of ways as number of blocks cached in internal memory */
-    	d.k = k;
-	
-    	/* setup size in items of internal memory used to cache blocks */
-    	d.M = blockSize * k;
+        /* setup block size (B) */
+        d.B = blockSize;
 
-    	/* create temporary file */
-    	d.des = tmpfile();
-    	if (d.des == NULL) { d.errCode = CANT_CREATE_TEMP_FILE; goto cleanup; }
+        /* setup number of ways as number of blocks cached in internal memory */
+        d.k = k;
 
-	    /* allocate block cache (of blockSize * k items) */
-    	d.itemCache = malloc(d.itemSize*d.M);
-    	if (d.itemCache == NULL) { d.errCode = CANT_ALLOCATE_MEMORY; goto cleanup; }
+        /* setup size in items of internal memory used to cache blocks */
+        d.M = blockSize * k;
 
-	    /* allocate file offset table */
-    	d.offset = malloc(sizeof(unsigned long long)*d.k);
-    	if (d.offset == NULL) { d.errCode = CANT_ALLOCATE_MEMORY; goto cleanup; }
+        /* create temporary file */
+        d.des = tmpfile();
+        if (d.des == NULL) {
+            d.errCode = CANT_CREATE_TEMP_FILE;
+            goto cleanup;
+        }
 
-	    /* dump relevant info to stderr in verbose mode */
-    	if (d.verb) {
-        	fprintf(stderr, "-- File indexing model: %lu bits\n",  (unsigned long)sizeof(off64_t)*8);
-	        fprintf(stderr, "-- Item size:        %lu bytes\n", (unsigned long)d.itemSize);
-    	    fprintf(stderr, "-- Block size (B):   %lu items (%.1f KB)\n", 
-        					(unsigned long)d.B, (d.B*d.itemSize)/1024.0);
-	        fprintf(stderr, "-- Input size (N):   %llu items (%.1f MB)\n", 
-    	    				(unsigned long long)d.N, theFileSize/(1024.0*1024.0));
-	        fprintf(stderr, "-- Memory usage\n");
-    	    fprintf(stderr, "--   Item cache (M): %lu items (%.1f MB)\n", 
-        					(unsigned long)d.M, 
-        					(d.M*d.itemSize)/(1024.0*1024.0));
-	        fprintf(stderr, "--   Offset table:   %lu indexes (%lu bytes)\n", 
-    	    				(unsigned long)d.k,
-        					(unsigned long)((sizeof(unsigned long long)*d.k)));
-    	}
-    }
-    else if (d.verb) {
-        fprintf(stderr, "-- File indexing model: %lu bits\n",  (unsigned long)sizeof(off64_t)*8);
-        fprintf(stderr, "-- Item size:        %lu bytes\n", (unsigned long)d.itemSize);
-        fprintf(stderr, "-- Input size (N):   %llu items (%.1f MB)\n", 
-        				(unsigned long long)d.N, theFileSize/(1024.0*1024.0));
-        fprintf(stderr, "-- Memory usage (M): %lu items (%.1f MB)\n", 
-        				(unsigned long)d.N, 
-        				(d.N*d.itemSize)/(1024.0*1024.0));
+        /* allocate block cache (of blockSize * k items) */
+        d.itemCache = malloc(d.itemSize * d.M);
+        if (d.itemCache == NULL) {
+            d.errCode = CANT_ALLOCATE_MEMORY;
+            goto cleanup;
+        }
+
+        /* allocate file offset table */
+        d.offset = malloc(sizeof (unsigned long long)*d.k);
+        if (d.offset == NULL) {
+            d.errCode = CANT_ALLOCATE_MEMORY;
+            goto cleanup;
+        }
+
+        /* dump relevant info to stderr in verbose mode */
+        if (d.verb) {
+            fprintf(stderr, "-- File indexing model: %lu bits\n", (unsigned long) sizeof (off64_t)*8);
+            fprintf(stderr, "-- Item size:        %lu bytes\n", (unsigned long) d.itemSize);
+            fprintf(stderr, "-- Block size (B):   %lu items (%.1f KB)\n",
+                    (unsigned long) d.B, (d.B * d.itemSize) / 1024.0);
+            fprintf(stderr, "-- Input size (N):   %llu items (%.1f MB)\n",
+                    (unsigned long long) d.N, theFileSize / (1024.0 * 1024.0));
+            fprintf(stderr, "-- Memory usage\n");
+            fprintf(stderr, "--   Item cache (M): %lu items (%.1f MB)\n",
+                    (unsigned long) d.M,
+                    (d.M * d.itemSize) / (1024.0 * 1024.0));
+            fprintf(stderr, "--   Offset table:   %lu indexes (%lu bytes)\n",
+                    (unsigned long) d.k,
+                    (unsigned long) ((sizeof (unsigned long long)*d.k)));
+        }
+    } else if (d.verb) {
+        fprintf(stderr, "-- File indexing model: %lu bits\n", (unsigned long) sizeof (off64_t)*8);
+        fprintf(stderr, "-- Item size:        %lu bytes\n", (unsigned long) d.itemSize);
+        fprintf(stderr, "-- Input size (N):   %llu items (%.1f MB)\n",
+                (unsigned long long) d.N, theFileSize / (1024.0 * 1024.0));
+        fprintf(stderr, "-- Memory usage (M): %lu items (%.1f MB)\n",
+                (unsigned long) d.N,
+                (d.N * d.itemSize) / (1024.0 * 1024.0));
     }
 
     if (externalFlag) return kWayMergeSort(&d);
-	else return inMemSort(&d);
-	
-  cleanup:
+    else return inMemSort(&d);
 
-    if (d.offset != NULL)	 free(d.offset);
+cleanup:
+
+    if (d.offset != NULL) free(d.offset);
     if (d.itemCache != NULL) free(d.itemCache);
-    if (d.src != NULL)		 fclose(d.src);
-    if (d.des != NULL)		 fclose(d.des);
+    if (d.src != NULL) fclose(d.src);
+    if (d.des != NULL) fclose(d.des);
 
     return d.errCode;
 }
-
 
 /* ----------------------------------------------------------------------------
  *  kWayMergeSort
@@ -207,24 +224,44 @@ int sort(	const char* pathName, size_t itemSize,
  * Sort a file of fixed-size items.
  * The function requires B*itemSize + sizeof(off64_t)*k + O(1) bytes of RAM.
  * return 0 upon successful completion, error code otherwise.
-*/
+ */
 int kWayMergeSort(Data *d) {
 
-	/* make first pass by sorting consecutive runs of M bytes on the file */
+    struct rusage runUsage;
+    struct timeval startRun, stopRun;
+
+    //START
+    getrusage(RUSAGE_SELF, &runUsage);
+    startRun = runUsage.ru_stime;
+
+    /* make first pass by sorting consecutive runs of M bytes on the file */
     if (!runFormation(d)) goto cleanup;
 
-	/* do remaining passes by repeatedly merging consecutive runs */
+    //STOP
+    getrusage(RUSAGE_SELF, &runUsage);
+    stopRun = runUsage.ru_utime;
+
+    if (d->verb) {
+        fprintf(stdout, "Run Formation started at: %ld.%lds\n", startRun.tv_sec, startRun.tv_usec);
+        fprintf(stdout, "Run Formation ended at: %ld.%lds\n", stopRun.tv_sec, stopRun.tv_usec);
+
+        struct timeval totRun = timevaldiff(&stopRun, &startRun);
+
+        fprintf(stdout, "Run Formation time: %ld.%lds\n", totRun.tv_sec, totRun.tv_usec);
+    }
+
+    /* do remaining passes by repeatedly merging consecutive runs */
     if (!sortPasses(d)) goto cleanup;
 
     /* copy temp file back onto original file, if needed */
     if (!copyBack(d)) goto cleanup;
-	
-  cleanup:
 
-    if (d->offset != NULL)	 free(d->offset);
+cleanup:
+
+    if (d->offset != NULL) free(d->offset);
     if (d->itemCache != NULL) free(d->itemCache);
-    if (d->src != NULL)		 fclose(d->src);
-    if (d->des != NULL)		 fclose(d->des);
+    if (d->src != NULL) fclose(d->src);
+    if (d->des != NULL) fclose(d->des);
 
     return d->errCode;
 }
@@ -233,8 +270,8 @@ int kWayMergeSort(Data *d) {
  *  runFormation
  * ----------------------------------------------------------------------------
  * Sort in internal memory consecutive runs of M items from source file and
- * append them to destination file
-*/
+ * append them to destination filefa
+ */
 static int runFormation(Data* d) {
 
     size_t theReadItems;
@@ -265,14 +302,13 @@ static int runFormation(Data* d) {
     return 1;
 }
 
-
 /* ----------------------------------------------------------------------------
  *  sortPasses
  * ----------------------------------------------------------------------------
  * Make passes over the file starting from initial runs of M items, with runs
  * growing by a factor of k between consecutive passes. At each pass, repeatedly
  * merge groups of k consecutive sorted runs.
-*/
+ */
 static int sortPasses(Data* d) {
 
     off64_t runLen;
@@ -284,13 +320,13 @@ static int sortPasses(Data* d) {
 
         if (d->verb)
             fprintf(stderr, "-- Merging runs of %llu items into runs of %llu items\n",
-                (unsigned long long)runLen, (unsigned long long)(runLen*d->k));
+                (unsigned long long) runLen, (unsigned long long) (runLen * d->k));
 
         /* exchange the role of source and destination files and rewind them */
         swapFiles(d);
 
         /* repeatedly merge consecutive groups of k sorted runs */
-        for (start = 0; start < d->N; start = start + runLen*d->k) {
+        for (start = 0; start < d->N; start = start + runLen * d->k) {
 
             //if (d->verb) fprintf(stderr, ".");
 
@@ -304,15 +340,21 @@ static int sortPasses(Data* d) {
     return 1;
 }
 
-
 /* ----------------------------------------------------------------------------
  *  kMerge
  * ----------------------------------------------------------------------------
  * Merge k consecutive sorted runs of r items starting at item j.
-*/
+ */
 static int kMerge(Data* d, off64_t runLen, off64_t start) {
 
-	unsigned long long i=0;
+    unsigned long long i = 0;
+    
+    struct rusage mergeUsage;
+    struct timeval startMerge, stopMerge;
+
+
+    getrusage(RUSAGE_SELF, &mergeUsage);
+    startMerge = mergeUsage.ru_utime;
 
     /* initialize runs */
     if (!initRuns(d, runLen, start)) return 0;
@@ -324,33 +366,44 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
         size_t minRun = getMinRun(d, runLen, start);
 
         /* all runs are empty */
-        if (minRun == (size_t)-1) break;
+        if (minRun == (size_t) - 1) break;
 
         /* write the min item */
         if (fwrite(_GetFrontItem(d, minRun), d->itemSize, 1, d->des) != 1)
             return (d->errCode = FILE_WRITE_ERROR, 0);
         else if (d->verb) {
-        	i++;
-        	unsigned long long x = (runLen*d->k) > d->N ? d->N : (runLen*d->k);
-        	if (i%(x/100)==0) fprintf(stderr, ".");
+            i++;
+            unsigned long long x = (runLen * d->k) > d->N ? d->N : (runLen * d->k);
+            if (i % (x / 100) == 0) fprintf(stderr, ".");
         }
 
         /* get next front-item in the run */
         if (!nextFrontItem(d, runLen, start, minRun)) return 0;
     }
+    getrusage(RUSAGE_SELF, &mergeUsage);
+    stopMerge = mergeUsage.ru_utime;
 
-    if (d->verb) fprintf(stderr, "\n  completed merge of %lu sequences\n", 
-    					 (unsigned long)d->k);
+    if (d->verb) {
+        fprintf(stdout, "\nMerge started at: %ld.%lds\n", startMerge.tv_sec, startMerge.tv_usec);
+        fprintf(stdout, "Merge ended at: %ld.%lds\n", stopMerge.tv_sec, stopMerge.tv_usec);
+
+        struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
+
+        fprintf(stdout, "Merge time: %ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
+    }
+
+
+    if (d->verb) fprintf(stderr, "\ncompleted merge of %lu sequences\n",
+            (unsigned long) d->k);
 
     return 1;
 }
-
 
 /* ----------------------------------------------------------------------------
  *  initRuns
  * ----------------------------------------------------------------------------
  * Initialize runs
-*/
+ */
 static int initRuns(Data* d, off64_t runLen, off64_t start) {
 
     size_t q, theReadItems;
@@ -372,20 +425,19 @@ static int initRuns(Data* d, off64_t runLen, off64_t start) {
         theReadItems = fread(_GetFrontItem(d, q), d->itemSize, d->B, d->src);
 
         /* check for file read error */
-        if ((d->offset[q] + d->B >  d->N && theReadItems != d->N % d->B) ||
-            (d->offset[q] + d->B <= d->N && theReadItems < d->B))
+        if ((d->offset[q] + d->B > d->N && theReadItems != d->N % d->B) ||
+                (d->offset[q] + d->B <= d->N && theReadItems < d->B))
             return (d->errCode = FILE_READ_ERROR, 0);
     }
-   
+
     return 1;
 }
-
 
 /* ----------------------------------------------------------------------------
  *  nextFrontItem
  * ----------------------------------------------------------------------------
  * Let front item be the next item
-*/
+ */
 static int nextFrontItem(Data* d, off64_t runLen, off64_t start, size_t minRun) {
 
     size_t theReadItems;
@@ -400,25 +452,24 @@ static int nextFrontItem(Data* d, off64_t runLen, off64_t start, size_t minRun) 
         fseeko64(d->src, d->offset[minRun] * d->itemSize, SEEK_SET);
 
         /* read up to B consecutive items from source file */
-        theReadItems = fread(_GetFrontItem(d,minRun), d->itemSize, d->B, d->src);
+        theReadItems = fread(_GetFrontItem(d, minRun), d->itemSize, d->B, d->src);
 
         /* check for file read error */
-        if ((d->offset[minRun] + d->B >  d->N && theReadItems != d->N % d->B) ||
-            (d->offset[minRun] + d->B <= d->N && theReadItems <  d->B))
+        if ((d->offset[minRun] + d->B > d->N && theReadItems != d->N % d->B) ||
+                (d->offset[minRun] + d->B <= d->N && theReadItems < d->B))
             return (d->errCode = FILE_READ_ERROR, 0);
     }
     return 1;
 }
 
-
 /* ----------------------------------------------------------------------------
  *  getMinRun
  * ----------------------------------------------------------------------------
  * Get index of run containing the min item, or -1 if all runs are empty
-*/
+ */
 static size_t getMinRun(Data* d, off64_t runLen, off64_t start) {
 
-    size_t q, qmin = (size_t)-1;
+    size_t q, qmin = (size_t) - 1;
 
     /* scan runs */
     for (q = 0; q < d->k; ++q) {
@@ -427,19 +478,18 @@ static size_t getMinRun(Data* d, off64_t runLen, off64_t start) {
         if (_EmptyRun(d, runLen, start, q)) continue;
 
         /* check if current item is smaller than previous min */
-        if (qmin == (size_t)-1 || d->compare(_GetFrontItem(d, q), _GetFrontItem(d, qmin)) < 0)
+        if (qmin == (size_t) - 1 || d->compare(_GetFrontItem(d, q), _GetFrontItem(d, qmin)) < 0)
             qmin = q;
     }
 
     return qmin;
 }
 
-
 /* ----------------------------------------------------------------------------
  *  copyBack
  * ----------------------------------------------------------------------------
  * Copy temporary file back to original file, if needed.
-*/
+ */
 static int copyBack(Data* d) {
     size_t theReadItems;
 
@@ -470,50 +520,54 @@ static int copyBack(Data* d) {
     return 1;
 }
 
-
 /* ----------------------------------------------------------------------------
  *  inMemSort
  * ----------------------------------------------------------------------------
  * Run standard quicksort
-*/
+ */
 static int inMemSort(Data* d) {
     size_t theReadItems;
-    
+
     fprintf(stderr, "\n--  Running standard qsort \n");
 
     /* allocate cache for all items */
-    d->itemCache = malloc(d->itemSize*d->N); //599261000
-    if (d->itemCache == NULL) { d->errCode = CANT_ALLOCATE_MEMORY; goto cleanup; }
-    
-    fprintf(stderr, "\n--  Memory allocation successful \n");    
-	
+    d->itemCache = malloc(d->itemSize * d->N); //599261000
+    if (d->itemCache == NULL) {
+        d->errCode = CANT_ALLOCATE_MEMORY;
+        goto cleanup;
+    }
+
+    fprintf(stderr, "\n--  Memory allocation successful \n");
+
     /* read all items from source file */
     theReadItems = fread(d->itemCache, d->itemSize, d->N, d->src);
 
     /* break if end of file reached */
-    if (theReadItems == 0) { d->errCode = FILE_READ_ERROR;  goto cleanup; }
+    if (theReadItems == 0) {
+        d->errCode = FILE_READ_ERROR;
+        goto cleanup;
+    }
 
     /* sort them in internal memory */
     qsort(d->itemCache, theReadItems, d->itemSize, d->compare);
 
     fprintf(stderr, "    [done]\n");
 
-  cleanup:
+cleanup:
 
-    if (d->offset != NULL)	 free(d->offset);
+    if (d->offset != NULL) free(d->offset);
     if (d->itemCache != NULL) free(d->itemCache);
-    if (d->src != NULL)		 fclose(d->src);
-    if (d->des != NULL)		 fclose(d->des);
+    if (d->src != NULL) fclose(d->src);
+    if (d->des != NULL) fclose(d->des);
 
     return d->errCode;
 }
-
 
 /* ----------------------------------------------------------------------------
  *  swapFiles
  * ----------------------------------------------------------------------------
  * Exchange the role of source and destination files and rewind them
-*/
+ */
 static void swapFiles(Data* d) {
     FILE* tmp = d->src;
     d->src = d->des;
@@ -521,4 +575,11 @@ static void swapFiles(Data* d) {
     rewind(d->src);
     rewind(d->des);
     d->numSwaps++;
+}
+
+struct timeval timevaldiff(struct timeval *a, struct timeval *b) {
+    struct timeval r;
+    r.tv_sec = a->tv_sec - b->tv_sec;
+    r.tv_usec = a->tv_usec - b->tv_usec;
+    return r;
 }

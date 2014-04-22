@@ -2,7 +2,7 @@
  *  kWayMergeSort.h
  * ============================================================================
  *  Irene Finocchi (finocchi@di.uniroma1.it)
-*/
+ */
 
 #ifndef __kWayMergeSort__
 #define __kWayMergeSort__
@@ -25,7 +25,7 @@ extern char* ErrTable[];
 #define GetErrorString(errCode) (ErrTable[errCode])
 
 int sort(const char* inPathName, size_t inItemSize,
-              int (*inCompar)(const void*, const void*),
-              size_t inBlockSize, size_t inCacheBlockNum, size_t externalFlag, int inVerbose);
+        int (*inCompar)(const void*, const void*),
+        size_t inBlockSize, size_t inCacheBlockNum, size_t externalFlag, int inVerbose);
 
 #endif
