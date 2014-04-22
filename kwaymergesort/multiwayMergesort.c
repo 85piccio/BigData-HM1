@@ -235,7 +235,7 @@ int kWayMergeSort(Data *d) {
     startRun = runUsage.ru_stime;
 
     /* make first pass by sorting consecutive runs of M bytes on the file */
-    if (!runFormation(d)) goto cleanup;
+    if (!runFormation(d)) goto cleanup; 
 
     //STOP
     getrusage(RUSAGE_SELF, &runUsage); 
