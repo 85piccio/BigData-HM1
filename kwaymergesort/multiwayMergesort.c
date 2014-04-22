@@ -238,7 +238,7 @@ int kWayMergeSort(Data *d) {
     if (!runFormation(d)) goto cleanup;
 
     //STOP
-    getrusage(RUSAGE_SELF, &runUsage);
+    getrusage(RUSAGE_SELF, &runUsage); 
     stopRun = runUsage.ru_utime;
 
     if (d->verb) {
