@@ -6,6 +6,13 @@
                    projectFiles="true">
       <itemPath>multiwayMergesort.h</itemPath>
     </logicalFolder>
+    <logicalFolder name="heap_ib" displayName="heap_ib" projectFiles="true">
+      <itemPath>heap_ib/bheap.c</itemPath>
+      <itemPath>heap_ib/bheap.h</itemPath>
+      <itemPath>heap_ib/types.h</itemPath>
+      <itemPath>heap_ib/vector.c</itemPath>
+      <itemPath>heap_ib/vector.h</itemPath>
+    </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
@@ -28,6 +35,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>heap_ib</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -37,10 +47,23 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <cTool>
+          <commandlineTool>gcc</commandlineTool>
+        </cTool>
         <linkerTool>
           <output>kwaymergesort</output>
         </linkerTool>
       </compileType>
+      <item path="heap_ib/bheap.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="heap_ib/bheap.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="heap_ib/types.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="heap_ib/vector.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="heap_ib/vector.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="multiwayMergesort.c" ex="false" tool="0" flavor2="0">
@@ -68,6 +91,16 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="heap_ib/bheap.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="heap_ib/bheap.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="heap_ib/types.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="heap_ib/vector.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="heap_ib/vector.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="multiwayMergesort.c" ex="false" tool="0" flavor2="0">

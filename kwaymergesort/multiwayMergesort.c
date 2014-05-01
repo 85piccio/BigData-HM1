@@ -19,8 +19,10 @@
 #include "multiwayMergesort.h"
 #include <string.h>
 #include <stdio.h>
+//HM1
 #include <sys/time.h>
 #include <sys/resource.h>
+#include "heap_ib/bheap.h"
 
 #ifdef __MAC__
 
@@ -54,6 +56,9 @@ typedef struct {
 
     int (*compare)(const void*, const void*); /* item comparator */
 
+    //hm1   
+    bheap_t heap; //hm1 heap
+
     int verb; /* verbose flag */
     int errCode; /* operation error code */
 } Data;
@@ -81,7 +86,8 @@ static size_t getMinRun(Data* d, off64_t r, off64_t j);
 static int nextFrontItem(Data* d, off64_t r, off64_t j, size_t q);
 static int copyBack(Data* d);
 //HM1
-struct timeval timevaldiff(struct timeval *a, struct timeval *b);
+static struct timeval timevaldiff(struct timeval *a, struct timeval *b);
+static boolean heap_elem_destroy(void *data);
 
 /* macros */
 #define		  _EmptyRun(d,r,j,q)  ( (d)->offset[q] >= (d)->N || 			\
@@ -205,6 +211,7 @@ int sort(const char* pathName, size_t itemSize,
                 (d.N * d.itemSize) / (1024.0 * 1024.0));
     }
 
+    //call sort function
     if (externalFlag) return kWayMergeSort(&d);
     else return inMemSort(&d);
 
@@ -225,20 +232,42 @@ cleanup:
  * The function requires B*itemSize + sizeof(off64_t)*k + O(1) bytes of RAM.
  * return 0 upon successful completion, error code otherwise.
  */
+
+////HEAP TEST _ TODO REMOVE
+#define MIN_HEAP	
+
+int int_compare(const void* left, const void* right) {
+    const int* p_left = left;
+    const int* p_right = right;
+
+#ifdef MAX_HEAP	
+    return (*p_left) - (*p_right); // max-heap
+#else
+    return (*p_right) - (*p_left); // min-heap
+#endif
+}
+
 int kWayMergeSort(Data *d) {
 
     struct rusage runUsage;
     struct timeval startRun, stopRun;
+
+
+    boolean bheapCreate = bheap_create(&d->heap, sizeof (int), 1, d->compare, heap_elem_destroy);
+    if (!bheapCreate) {
+        d->errCode = CANT_ALLOCATE_HEAP;
+        goto cleanup;        
+    }
 
     //START
     getrusage(RUSAGE_SELF, &runUsage);
     startRun = runUsage.ru_stime;
 
     /* make first pass by sorting consecutive runs of M bytes on the file */
-    if (!runFormation(d)) goto cleanup; 
+    if (!runFormation(d)) goto cleanup;
 
     //STOP
-    getrusage(RUSAGE_SELF, &runUsage); 
+    getrusage(RUSAGE_SELF, &runUsage);
     stopRun = runUsage.ru_utime;
 
     if (d->verb) {
@@ -348,11 +377,12 @@ static int sortPasses(Data* d) {
 static int kMerge(Data* d, off64_t runLen, off64_t start) {
 
     unsigned long long i = 0;
-    
+
+    //HM1
     struct rusage mergeUsage;
     struct timeval startMerge, stopMerge;
 
-
+    //HM1
     getrusage(RUSAGE_SELF, &mergeUsage);
     startMerge = mergeUsage.ru_utime;
 
@@ -577,9 +607,17 @@ static void swapFiles(Data* d) {
     d->numSwaps++;
 }
 
-struct timeval timevaldiff(struct timeval *a, struct timeval *b) {
+//hm1 
+//Compute difference between two timeva value
+
+static struct timeval timevaldiff(struct timeval *a, struct timeval *b) {
     struct timeval r;
-    r.tv_sec = a->tv_sec - b->tv_sec;
-    r.tv_usec = a->tv_usec - b->tv_usec;
+    r.tv_sec = abs(a->tv_sec - b->tv_sec);
+    r.tv_usec = abs(a->tv_usec - b->tv_usec);
     return r;
+}
+//Deallocate heap structure - TODO: finish
+
+static boolean heap_elem_destroy(void *data) {
+    return TRUE;
 }

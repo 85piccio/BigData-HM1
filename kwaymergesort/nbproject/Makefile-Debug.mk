@@ -35,6 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/heap_ib/bheap.o \
+	${OBJECTDIR}/heap_ib/vector.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/multiwayMergesort.o
 
@@ -61,6 +63,16 @@ LDLIBSOPTIONS=
 
 kwaymergesort: ${OBJECTFILES}
 	${LINK.c} -o kwaymergesort ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/heap_ib/bheap.o: heap_ib/bheap.c 
+	${MKDIR} -p ${OBJECTDIR}/heap_ib
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/heap_ib/bheap.o heap_ib/bheap.c
+
+${OBJECTDIR}/heap_ib/vector.o: heap_ib/vector.c 
+	${MKDIR} -p ${OBJECTDIR}/heap_ib
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/heap_ib/vector.o heap_ib/vector.c
 
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}
