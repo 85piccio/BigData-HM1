@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/heap_ib/bheap.o \
+	${OBJECTDIR}/heap_ib/testHeap.o \
 	${OBJECTDIR}/heap_ib/vector.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/multiwayMergesort.o
@@ -68,6 +69,11 @@ ${OBJECTDIR}/heap_ib/bheap.o: heap_ib/bheap.c
 	${MKDIR} -p ${OBJECTDIR}/heap_ib
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/heap_ib/bheap.o heap_ib/bheap.c
+
+${OBJECTDIR}/heap_ib/testHeap.o: heap_ib/testHeap.c 
+	${MKDIR} -p ${OBJECTDIR}/heap_ib
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/heap_ib/testHeap.o heap_ib/testHeap.c
 
 ${OBJECTDIR}/heap_ib/vector.o: heap_ib/vector.c 
 	${MKDIR} -p ${OBJECTDIR}/heap_ib
