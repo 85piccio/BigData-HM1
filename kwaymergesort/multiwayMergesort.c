@@ -63,6 +63,13 @@ typedef struct {
     int errCode; /* operation error code */
 } Data;
 
+typedef unsigned long ItemType;
+typedef struct {
+    int k;
+    off64_t offset;
+    ItemType val;
+} heapElem;
+
 /* table of error messages */
 char* ErrTable[] = {
     "",
@@ -84,8 +91,16 @@ static int kMerge(Data* d, off64_t r, off64_t j);
 static int initRuns(Data* d, off64_t r, off64_t j);
 static size_t getMinRun(Data* d, off64_t r, off64_t j);
 static int nextFrontItem(Data* d, off64_t r, off64_t j, size_t q);
+
+//HM1
+static int kMergeHeap(Data* d, off64_t r, off64_t j);
+static int initRunsHeap(Data* d, off64_t r, off64_t j);
+static size_t getMinRunHeap(Data* d, off64_t r, off64_t j);
+static int nextFrontItemHeap(Data* d, off64_t r, off64_t j, size_t q);
+
 static int copyBack(Data* d);
 //HM1
+int heapComp(const void* a, const void* b);
 static struct timeval timevaldiff(struct timeval *a, struct timeval *b);
 static boolean heap_elem_destroy(void *data);
 
@@ -94,6 +109,11 @@ static boolean heap_elem_destroy(void *data);
 							 		(d)->offset[q] >= (j) + ((q)+1) * (r))
 #define 	  _GetFrontItem(d,q)  ( (d)->itemCache + ( (q)*(d)->B +			\
 							 		(d)->offset[q] % (d)->B )*(d)->itemSize)
+//HM1 version - passo direttamente il valore di offset invece di "cercarlo" nell array
+#define		  _EmptyRunHeap(d,r,j,hp)  ( (hp).offset >= (d)->N || 			\
+							 		(hp).offset >= (j) + ((hp).k +1) * (r))
+#define 	  _GetFrontHeapItem(d,hp)  ( (d)->itemCache + ( ((hp).k)*(d)->B +			\
+							 		(hp).offset % (d)->B )*(d)->itemSize)
 
 /* ----------------------------------------------------------------------------
  *  sort
@@ -233,31 +253,12 @@ cleanup:
  * return 0 upon successful completion, error code otherwise.
  */
 
-////HEAP TEST _ TODO REMOVE
-#define MIN_HEAP	
-
-int int_compare(const void* left, const void* right) {
-    const int* p_left = left;
-    const int* p_right = right;
-
-#ifdef MAX_HEAP	
-    return (*p_left) - (*p_right); // max-heap
-#else
-    return (*p_right) - (*p_left); // min-heap
-#endif
-}
-
 int kWayMergeSort(Data *d) {
 
+
+    //HM1
     struct rusage runUsage;
     struct timeval startRun, stopRun;
-
-
-    boolean bheapCreate = bheap_create(&d->heap, sizeof (int), 1, d->compare, heap_elem_destroy);
-    if (!bheapCreate) {
-        d->errCode = CANT_ALLOCATE_HEAP;
-        goto cleanup;        
-    }
 
     //START
     getrusage(RUSAGE_SELF, &runUsage);
@@ -299,7 +300,7 @@ cleanup:
  *  runFormation
  * ----------------------------------------------------------------------------
  * Sort in internal memory consecutive runs of M items from source file and
- * append them to destination filefa
+ * append them to destination file
  */
 static int runFormation(Data* d) {
 
@@ -360,7 +361,13 @@ static int sortPasses(Data* d) {
             //if (d->verb) fprintf(stderr, ".");
 
             /* merge k consecutive sorted runs of runLen items starting at item j */
-            if (!kMerge(d, runLen, start)) return 0;
+            boolean useHeap = TRUE;
+            if (!useHeap) {
+                if (!kMerge(d, runLen, start)) return 0;
+            } else {
+                if (!kMergeHeap(d, runLen, start)) return 0;
+            }
+
         }
 
         if (d->verb) fprintf(stderr, "   [done]\n");
@@ -382,7 +389,7 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
     struct rusage mergeUsage;
     struct timeval startMerge, stopMerge;
 
-    //HM1
+    //HM1-START MARGE
     getrusage(RUSAGE_SELF, &mergeUsage);
     startMerge = mergeUsage.ru_utime;
 
@@ -410,6 +417,8 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
         /* get next front-item in the run */
         if (!nextFrontItem(d, runLen, start, minRun)) return 0;
     }
+
+    //HM1
     getrusage(RUSAGE_SELF, &mergeUsage);
     stopMerge = mergeUsage.ru_utime;
 
@@ -425,6 +434,85 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
 
     if (d->verb) fprintf(stderr, "\ncompleted merge of %lu sequences\n",
             (unsigned long) d->k);
+
+    return 1;
+}
+
+static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
+
+    unsigned long long i = 0;
+
+    //HM1
+    struct rusage mergeUsage;
+    struct timeval startMerge, stopMerge;
+
+    //HM1 heap create
+    boolean bheapCreate = bheap_create(&(d->heap), sizeof (heapElem), 1, heapComp, heap_elem_destroy);
+    if (!bheapCreate) {
+        d->errCode = CANT_ALLOCATE_HEAP;
+        return 0;
+    }
+
+    //HM1-START MARGE
+    getrusage(RUSAGE_SELF, &mergeUsage);
+    startMerge = mergeUsage.ru_utime;
+
+    /* initialize runs */
+    if (!initRunsHeap(d, runLen, start)) return 0;
+
+    /* merge runs */
+    for (;;) {
+
+        /* heap are empty */
+        if (bheap_size(&(d->heap)) < 1) break;
+
+        heapElem* stp = bheap_peek(&(d->heap));
+
+        /* get index of run containing the min item */
+        size_t minRun = getMinRunHeap(d, runLen, start);
+
+        
+        //TEST MACRO
+//        if (_GetFrontHeapItem(d, *stp) == _GetFrontItem(d, stp->k)){
+//            printf("TEST:\t%d\t%d\n",_GetFrontHeapItem(d, *stp) , _GetFrontItem(d, stp->k));
+//            printf("OFFSET:\t%d\t%d\n",stp->offset , d->offset[0]);
+//        }
+//        if (_EmptyRunHeap(d, runLen, start, *stp) == _EmptyRun(d, runLen, start, minRun)) {
+//            printf("TEST:\t%d\t%d\n", _EmptyRunHeap(d, runLen, start, *stp), _EmptyRun(d, runLen, start, minRun));
+//            printf("OFFSET:\t%d\t%d\n", stp->offset, d->offset[0]);
+//        }
+
+        /* write the min item */
+        if (fwrite(_GetFrontHeapItem(d, *stp), d->itemSize, 1, d->des) != 1)
+            return (d->errCode = FILE_WRITE_ERROR, 0);
+        else if (d->verb) {
+            i++;
+            unsigned long long x = (runLen * d->k) > d->N ? d->N : (runLen * d->k);
+            if (i % (x / 100) == 0) fprintf(stderr, ".");
+        }
+        /* get next front-item in the run */
+        if (!nextFrontItemHeap(d, runLen, start, minRun)) return 0;
+    }
+
+    //HM1
+    getrusage(RUSAGE_SELF, &mergeUsage);
+    stopMerge = mergeUsage.ru_utime;
+
+    if (d->verb) {
+        fprintf(stdout, "\nMerge started at: %ld.%lds\n", startMerge.tv_sec, startMerge.tv_usec);
+        fprintf(stdout, "Merge ended at: %ld.%lds\n", stopMerge.tv_sec, stopMerge.tv_usec);
+
+        struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
+
+        fprintf(stdout, "Merge time: %ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
+    }
+
+
+    if (d->verb) fprintf(stderr, "\ncompleted merge of %lu sequences\n",
+            (unsigned long) d->k);
+
+    //Dealloco struttura heap
+    heap_elem_destroy(&d->heap);
 
     return 1;
 }
@@ -463,6 +551,43 @@ static int initRuns(Data* d, off64_t runLen, off64_t start) {
     return 1;
 }
 
+static int initRunsHeap(Data* d, off64_t runLen, off64_t start) {
+
+    size_t q, theReadItems;
+
+    /* init runs */
+    for (q = 0; q < d->k; ++q) {
+        //init heap element
+        heapElem ts;
+
+        ts.offset = start + q * runLen;
+        ts.k = q;
+        ts.val = *_GetFrontHeapItem(d, ts);
+        
+//        fprintf(stdout,"TEST ts : %ul\n" , (int) ts.val);
+
+        bheap_push(&(d->heap), &ts);
+
+
+        /* if index d->offset[q] points past the end of the file, skip read operation
+           as the run is empty */
+        if (ts.offset >= d->N) continue;
+
+        /* set the file position to the beg inning of the q-th run */
+        fseeko64(d->src, ts.offset * d->itemSize, SEEK_SET);
+
+        /* read up to B consecutive items from source file */
+        theReadItems = fread(_GetFrontHeapItem(d, ts), d->itemSize, d->B, d->src);
+
+        /* check for file read error */
+        if ((ts.offset + d->B > d->N && theReadItems != d->N % d->B) ||
+                (ts.offset + d->B <= d->N && theReadItems < d->B))
+            return (d->errCode = FILE_READ_ERROR, 0);
+    }
+
+    return 1;
+}
+
 /* ----------------------------------------------------------------------------
  *  nextFrontItem
  * ----------------------------------------------------------------------------
@@ -492,6 +617,45 @@ static int nextFrontItem(Data* d, off64_t runLen, off64_t start, size_t minRun) 
     return 1;
 }
 
+static int nextFrontItemHeap(Data* d, off64_t runLen, off64_t start, size_t minRun) {
+
+    size_t theReadItems;
+
+
+    /* in minRun, advance front item pointer */
+    heapElem ts;
+    heapElem* lshp;
+
+    lshp = bheap_peek(&(d->heap));
+
+    //new heap element to push
+    ts.k = lshp->k;
+    ts.offset = lshp->offset + 1;
+
+
+    bheap_pop(&(d->heap)); //delete last mim
+
+
+
+    bheap_push(&(d->heap), &ts);
+
+    /* if the block is empty and the run is not empty, cache the next block */
+    if (ts.offset % d->B == 0 && !_EmptyRun(d, runLen, start, minRun)) {
+
+        /* set the file position to the next block within the q-th run */
+        fseeko64(d->src, d->offset[minRun] * d->itemSize, SEEK_SET);
+
+        /* read up to B consecutive items from source file */
+        theReadItems = fread(_GetFrontItem(d, minRun), d->itemSize, d->B, d->src);
+
+        /* check for file read error */
+        if ((ts.offset + d->B > d->N && theReadItems != d->N % d->B) ||
+                (ts.offset + d->B <= d->N && theReadItems < d->B))
+            return (d->errCode = FILE_READ_ERROR, 0);
+    }
+    return 1;
+}
+
 /* ----------------------------------------------------------------------------
  *  getMinRun
  * ----------------------------------------------------------------------------
@@ -513,6 +677,16 @@ static size_t getMinRun(Data* d, off64_t runLen, off64_t start) {
     }
 
     return qmin;
+}
+
+static size_t getMinRunHeap(Data* d, off64_t runLen, off64_t start) {
+
+    heapElem* st;
+    do {
+        st = bheap_peek(&(d->heap));
+    } while (_EmptyRunHeap(d, runLen, start, *st)); //CHECK WHILE
+
+    return st->k;
 }
 
 /* ----------------------------------------------------------------------------
@@ -616,6 +790,20 @@ static struct timeval timevaldiff(struct timeval *a, struct timeval *b) {
     r.tv_usec = abs(a->tv_usec - b->tv_usec);
     return r;
 }
+//struct heapElem 
+
+
+//TODO--->CHECK
+
+int heapComp(const void* a, const void* b) {
+    const heapElem* left = a;
+    const heapElem* right = b;
+//    if((*right).val - (*left).val != 0)
+//    printf("##%ul vs %ul --> %d\n",(*right).val,(*left).val,(*right).val - (*left).val);
+    return (*right).val - (*left).val; // min-heap
+}
+
+
 //Deallocate heap structure - TODO: finish
 
 static boolean heap_elem_destroy(void *data) {
