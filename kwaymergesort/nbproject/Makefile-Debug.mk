@@ -39,7 +39,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/heap_ib/testHeap.o \
 	${OBJECTDIR}/heap_ib/vector.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/multiwayMergesort.o
+	${OBJECTDIR}/multiwayMergesort.o \
+	${OBJECTDIR}/newfile.o
 
 
 # C Compiler Flags
@@ -89,6 +90,11 @@ ${OBJECTDIR}/multiwayMergesort.o: multiwayMergesort.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/multiwayMergesort.o multiwayMergesort.c
+
+${OBJECTDIR}/newfile.o: newfile.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/newfile.o newfile.c
 
 # Subprojects
 .build-subprojects:

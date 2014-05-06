@@ -110,7 +110,7 @@ static boolean heap_elem_destroy(void *data);
 							 		(d)->offset[q] >= (j) + ((q)+1) * (r))
 #define 	  _GetFrontItem(d,q)  ( (d)->itemCache + ( (q)*(d)->B +			\
 							 		(d)->offset[q] % (d)->B )*(d)->itemSize)
-//HM1 version - passo direttamente il valore di offset invece di "cercarlo" nell array
+//HM1 version - passo elemento strut elemHeap invece del indice del vettore
 #define		  _EmptyRunHeap(d,r,j,hp)  ( (hp).offset >= (d)->N || 			\
 							 		(hp).offset >= (j) + ((hp).k +1) * (r))
 #define 	  _GetFrontHeapItem(d,hp)  ( (d)->itemCache + ( ((hp).k)*(d)->B +			\
@@ -397,12 +397,12 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
     /* initialize runs */
     if (!initRuns(d, runLen, start)) return 0;
 
+
     /* merge runs */
     for (;;) {
 
         /* get index of run containing the min item */
         size_t minRun = getMinRun(d, runLen, start);
-        //        printf("%d\n", minRun);
 
         /* all runs are empty */
         if (minRun == (size_t) - 1) break;
@@ -432,7 +432,6 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
 
         fprintf(stdout, "Merge time: %ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
     }
-
 
     if (d->verb) fprintf(stderr, "\ncompleted merge of %lu sequences\n",
             (unsigned long) d->k);
@@ -465,27 +464,14 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
     /* merge runs */
     for (;;) {
 
-
-
         /* get index of run containing the min item */
         size_t minRun = getMinRunHeap(d, runLen, start);
 
         /* all runs are empty */
-        if (minRun == (size_t) - 1) break;
-
-
+        if ((minRun == (size_t) - 1)) break;
 
         heapElem* stp = bheap_peek(&(d->heap));
-
-        //TEST MACRO
-        //        if (_GetFrontHeapItem(d, *stp) == _GetFrontItem(d, stp->k)){
-        //            printf("TEST:\t%d\t%d\n",_GetFrontHeapItem(d, *stp) , _GetFrontItem(d, stp->k));
-        //            printf("OFFSET:\t%d\t%d\n",stp->offset , d->offset[0]);
-        //        }
-        //        if (_EmptyRunHeap(d, runLen, start, *stp) == _EmptyRun(d, runLen, start, minRun)) {
-        //            printf("TEST:\t%d\t%d\n", _EmptyRunHeap(d, runLen, start, *stp), _EmptyRun(d, runLen, start, minRun));
-        //            printf("OFFSET:\t%d\t%d\n", stp->offset, d->offset[0]);
-        //        }
+        
 
         /* write the min item */
         if (fwrite(_GetFrontHeapItem(d, *stp), d->itemSize, 1, d->des) != 1)
@@ -495,6 +481,7 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
             unsigned long long x = (runLen * d->k) > d->N ? d->N : (runLen * d->k);
             if (i % (x / 100) == 0) fprintf(stderr, ".");
         }
+        
         /* get next front-item in the run */
         if (!nextFrontItemHeap(d, runLen, start, minRun)) return 0;
     }
@@ -605,6 +592,7 @@ static int nextFrontItem(Data* d, off64_t runLen, off64_t start, size_t minRun) 
 
     size_t theReadItems;
 
+
     /* in minRun, advance front item pointer */
     d->offset[minRun]++;
 
@@ -631,27 +619,28 @@ static int nextFrontItemHeap(Data* d, off64_t runLen, off64_t start, size_t minR
 
 
     /* in minRun, advance front item pointer */
-    heapElem ts;
     heapElem *lshp;
 
     lshp = bheap_peek(&(d->heap));
 
     //new heap element to push
+    heapElem ts;
     ts.k = lshp->k;
     ts.offset = lshp->offset + 1;
     ts.val = *_GetFrontHeapItem(d, ts);
 
-
     bheap_pop(&(d->heap)); //delete last mim
-    
+
+    bheap_push(&(d->heap), &ts); //re-add
+
     /* if the block is empty and the run is not empty, cache the next block */
     if (ts.offset % d->B == 0 && !_EmptyRunHeap(d, runLen, start, *lshp)) {
 
         /* set the file position to the next block within the q-th run */
-        fseeko64(d->src, d->offset[minRun] * d->itemSize, SEEK_SET);
+        fseeko64(d->src, ts.offset * d->itemSize, SEEK_SET);
 
         /* read up to B consecutive items from source file */
-        theReadItems = fread(_GetFrontHeapItem(d, *lshp), d->itemSize, d->B, d->src);
+        theReadItems = fread(_GetFrontHeapItem(d, ts), d->itemSize, d->B, d->src);
 
         /* check for file read error */
         if ((ts.offset + d->B > d->N && theReadItems != d->N % d->B) ||
@@ -681,7 +670,6 @@ static size_t getMinRun(Data* d, off64_t runLen, off64_t start) {
             qmin = q;
     }
 
-    //    printf("#! %d\t%d\n",*_GetFrontItem(d, qmin), qmin);
 
     return qmin;
 }
@@ -691,10 +679,10 @@ static size_t getMinRunHeap(Data* d, off64_t runLen, off64_t start) {
     heapElem* st;
 
     if (bheap_size(&(d->heap)) < 1) return (size_t) - 1;
-    
+
     int q = 0;
     do {
-        if(q >= d->k) return (size_t) - 1;
+        if (q >= d->k) return (size_t) - 1;
         st = bheap_peek(&(d->heap));
         q++;
     } while (_EmptyRunHeap(d, runLen, start, *st)); //CHECK WHILE
