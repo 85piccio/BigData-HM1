@@ -362,7 +362,7 @@ static int sortPasses(Data* d) {
             //if (d->verb) fprintf(stderr, ".");
 
             /* merge k consecutive sorted runs of runLen items starting at item j */
-            boolean useHeap = TRUE;
+            boolean useHeap = FALSE;
             if (!useHeap) {
                 if (!kMerge(d, runLen, start)) return 0;
             } else {
@@ -447,7 +447,7 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
     struct rusage mergeUsage;
     struct timeval startMerge, stopMerge;
 
-    //HM1 heap create
+    //HM1 create heap
     boolean bheapCreate = bheap_create(&(d->heap), sizeof (heapElem), 1, heapComp, heap_elem_destroy);
     if (!bheapCreate) {
         d->errCode = CANT_ALLOCATE_HEAP;
@@ -471,7 +471,7 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
         if ((minRun == (size_t) - 1)) break;
 
         heapElem* stp = bheap_peek(&(d->heap));
-        
+
 
         /* write the min item */
         if (fwrite(_GetFrontHeapItem(d, *stp), d->itemSize, 1, d->des) != 1)
@@ -481,7 +481,7 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
             unsigned long long x = (runLen * d->k) > d->N ? d->N : (runLen * d->k);
             if (i % (x / 100) == 0) fprintf(stderr, ".");
         }
-        
+
         /* get next front-item in the run */
         if (!nextFrontItemHeap(d, runLen, start, minRun)) return 0;
     }
@@ -523,10 +523,9 @@ static int initRuns(Data* d, off64_t runLen, off64_t start) {
 
         /* let p[q] be the index of the first item of the q-th run */
         d->offset[q] = start + q * runLen;
+        
 
-
-        //        fprintf(stdout,"TEST ts : %u\n" , _GetFrontItem(d, q));
-
+//        printf("VAL\t%d\n",*_GetFrontItem(d, q));
         /* if index d->offset[q] points past the end of the file, skip read operation
            as the run is empty */
         if (d->offset[q] >= d->N) continue;
@@ -534,7 +533,7 @@ static int initRuns(Data* d, off64_t runLen, off64_t start) {
         /* set the file position to the beginning of the q-th run */
         fseeko64(d->src, d->offset[q] * d->itemSize, SEEK_SET);
 
-        /* read up to B consecutive items from source file */
+        /* read up to B consecutive items from source file */        
         theReadItems = fread(_GetFrontItem(d, q), d->itemSize, d->B, d->src);
 
         /* check for file read error */
@@ -557,11 +556,11 @@ static int initRunsHeap(Data* d, off64_t runLen, off64_t start) {
 
         ts.offset = start + q * runLen;
         ts.k = q;
-        ts.val = *_GetFrontHeapItem(d, ts);
+        ts.val = _GetFrontHeapItem(d, ts); //puntatore al valore
 
         bheap_push(&(d->heap), &ts);
 
-        //        fprintf(stdout,"TEST ts : %u\n" , _GetFrontHeapItem(d, ts));
+                fprintf(stdout,"TEST ts : %u\n" , *_GetFrontHeapItem(d, ts));
 
 
         /* if index d->offset[q] points past the end of the file, skip read operation
@@ -627,7 +626,7 @@ static int nextFrontItemHeap(Data* d, off64_t runLen, off64_t start, size_t minR
     heapElem ts;
     ts.k = lshp->k;
     ts.offset = lshp->offset + 1;
-    ts.val = *_GetFrontHeapItem(d, ts);
+    ts.val = _GetFrontHeapItem(d, ts); //puntatore al valore
 
     bheap_pop(&(d->heap)); //delete last mim
 
@@ -685,9 +684,7 @@ static size_t getMinRunHeap(Data* d, off64_t runLen, off64_t start) {
         if (q >= d->k) return (size_t) - 1;
         st = bheap_peek(&(d->heap));
         q++;
-    } while (_EmptyRunHeap(d, runLen, start, *st)); //CHECK WHILE
-
-    //    fprintf(stdout,"#! %d\t%d\n",st->k,st->val);
+    } while (_EmptyRunHeap(d, runLen, start, *st));
 
     return st->k;
 }
@@ -794,14 +791,23 @@ static struct timeval timevaldiff(struct timeval *a, struct timeval *b) {
     return r;
 }
 //struct heapElem 
-
+int comparInt(const void* a, const void* b) {    
+//    printf("COMPAR:\t%d\t%d\n",*(ItemType*) a , *(ItemType*) b);
+    return *(ItemType*) a - *(ItemType*) b;
+}
 
 //TODO--->CHECK
-
 int heapComp(const void* a, const void* b) {
-    const heapElem* left = a;
-    const heapElem* right = b;
-    return (*right).val - (*left).val; // min-heap
+    const  heapElem* p_left =  ( heapElem*) a;
+    const  heapElem* p_right = ( heapElem*) b;
+        
+//    printf("%d\t%d\n", *(ItemType*) (p_right->val) ,  *(ItemType*) (p_left->val));
+    
+    return   *(ItemType*) p_right->val -  *(ItemType*) p_left->val;
+    
+//    return v_right -  v_left; // min-heap
+    
+
 }
 
 
