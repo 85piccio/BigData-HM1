@@ -359,9 +359,7 @@ static int sortPasses(Data* d) {
 
         /* repeatedly merge consecutive groups of k sorted runs */
         for (start = 0; start < d->N; start = start + runLen * d->k) {
-
-            //if (d->verb) fprintf(stderr, ".");
-
+            
             /* merge k consecutive sorted runs of runLen items starting at item j */
             boolean useHeap = TRUE;
             if (!useHeap) {
@@ -475,7 +473,6 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
 
 
         heapElem* stp = bheap_peek(&(d->heap));
-        //        fprintf(stdout,"%lu\t%zd\n",*(ItemType*) stp->val, bheap_size(&(d->heap)));
 
         /* write the min item */
         if (fwrite(_GetFrontHeapItem(d, *stp), d->itemSize, 1, d->des) != 1)
@@ -527,10 +524,7 @@ static int initRuns(Data* d, off64_t runLen, off64_t start) {
 
         /* let p[q] be the index of the first item of the q-th run */
         d->offset[q] = start + q * runLen;
-
-        //        fprintf(stdout,"inserisco: %lu\n", *(ItemType*) _GetFrontItem(d, q));
-
-
+        
         /* if index d->offset[q] points past the end of the file, skip read operation
            as the run is empty */
         if (d->offset[q] >= d->N) continue;
@@ -581,10 +575,6 @@ static int initRunsHeap(Data* d, off64_t runLen, off64_t start) {
 
         ts.val = _GetFrontHeapItem(d, ts); //puntatore al valore
         bheap_push(&(d->heap), &ts);
-        fprintf(stdout, "inserisco: %lu\n", *(ItemType*) ts.val);
-        heapElem *tss;
-        tss = bheap_peek(&(d->heap));
-        fprintf(stdout, "min heap: %lu\n", *(ItemType*) tss->val);
     }
 
     return 1;
@@ -602,15 +592,6 @@ static int nextFrontItem(Data* d, off64_t runLen, off64_t start, size_t minRun) 
 
     /* in minRun, advance front item pointer */
     d->offset[minRun]++;
-
-    //TEST f macro
-    //    heapElem ls;
-    //    ls.k = minRun;
-    //    ls.offset = d->offset[minRun];
-
-    //    if(_EmptyRun(d, runLen, start, minRun) == _EmptyRunHeap(d, runLen, start, ls)) fprintf(stdout,"ERRORE!!!! ");    
-    //    if(_GetFrontItem(d, minRun) == _GetFrontHeapItem(d, ls)) fprintf(stdout,"ERRORE!!!! ");   
-
 
     /* if the block is empty and the run is not empty, cache the next block */
     if (d->offset[minRun] % d->B == 0 && !_EmptyRun(d, runLen, start, minRun)) {
@@ -638,8 +619,7 @@ static int nextFrontItemHeap(Data* d, off64_t runLen, off64_t start, size_t minR
     heapElem *lshp;
 
     lshp = bheap_peek(&(d->heap));
-
-    //    if(lshp->k != minRun) fprintf(stdout,"ERRORE");
+    
     //new heap element to push
     heapElem ts;
     ts.k = minRun;
@@ -823,34 +803,12 @@ static struct timeval timevaldiff(struct timeval *a, struct timeval *b) {
     r.tv_usec = abs(a->tv_usec - b->tv_usec);
     return r;
 }
-//struct heapElem 
 
-int comparInt(const void* a, const void* b) {
-    //    printf("COMPAR:\t%d\t%d\n",*(ItemType*) a , *(ItemType*) b);
-    return *(ItemType*) a - *(ItemType*) b;
-}
-
-//TODO--->CHECK
-
-//static int heapComp(const void* a, const void* b) {
-//    const heapElem* p_left = (heapElem*) a;
-//    const heapElem* p_right = (heapElem*) b;
-//
-//    //    fprintf(stdout,"%d\t%d\t%d\n",*(ItemType*) p_right->val,*(ItemType*) p_left->val,*(ItemType*) p_right->val -  *(ItemType*) p_left->val );
-//
-//    return p_right->val -  p_left->val;
-//
-//    //    return v_right -  v_left; // min-heap
-//
-//
-//}
-
+//struct heapElem _ Def ordinamento
 static int heapComp(const void* a, const void* b) {
     const heapElem* p_left = (heapElem*) a;
     const heapElem* p_right = (heapElem*) b;
-
-    //    fprintf(stdout,"COMPAR:\t%d\t%d\t%d\n",*(ItemType*) p_right->val , *(ItemType*) p_left->val,*(ItemType*) p_right->val - *(ItemType*) p_left->val);
-
+    
     return *(ItemType*) p_right->val - *(ItemType*) p_left->val;
 }
 
