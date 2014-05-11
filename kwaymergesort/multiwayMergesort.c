@@ -395,9 +395,7 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
     //HM1-START MARGE
     getrusage(RUSAGE_SELF, &mergeUsage);
     startMerge = mergeUsage.ru_utime;
-
-
-    //    int jj = 0;
+    
     /* merge runs */
     for (;;) {
 
@@ -460,7 +458,7 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
     //HM1-START MARGE
     getrusage(RUSAGE_SELF, &mergeUsage);
     startMerge = mergeUsage.ru_utime;
-    //    int jj = 0;
+    
     /* merge runs */
     for (;;) {
 
@@ -558,10 +556,7 @@ static int initRunsHeap(Data* d, off64_t runLen, off64_t start) {
         /* if index d->offset[q] points past the end of the file, skip read operation
            as the run is empty */
         if (ts.offset >= d->N) continue;
-
-
-
-
+        
         /* set the file position to the beg inning of the q-th run */
         fseeko64(d->src, ts.offset * d->itemSize, SEEK_SET);
 
@@ -625,10 +620,7 @@ static int nextFrontItemHeap(Data* d, off64_t runLen, off64_t start, size_t minR
     ts.k = minRun;
     ts.offset = lshp->offset + 1;
 
-
     bheap_pop(&(d->heap)); //delete last mim
-    //    if (!_EmptyRunHeap(d, runLen, start, ts)) //aggiungo solo se valido CORRETTO?
-
 
     /* if the block is empty and the run is not empty, cache the next block */
     if (ts.offset % d->B == 0 && !_EmptyRunHeap(d, runLen, start, ts)) {
@@ -677,18 +669,8 @@ static size_t getMinRun(Data* d, off64_t runLen, off64_t start) {
 static size_t getMinRunHeap(Data* d, off64_t runLen, off64_t start) {
 
     heapElem *st;
-
-    //    if (bheap_size(&(d->heap)) < 1) return (size_t) - 1;
-
-    //    int q = 0;
-    //    do {
-    //        if (q >= d->k) return (size_t) - 1;
-    //        st = bheap_peek(&(d->heap));
-    //        q++;
-    //    } while (_EmptyRunHeap(d, runLen, start, *st));
-
-    /* scan runs */
-    //        int q;
+    
+    /* scan runs */    
     while (bheap_size(&(d->heap)) > 0) {
         st = bheap_peek(&(d->heap));
         /* skip empty runs */
@@ -696,10 +678,6 @@ static size_t getMinRunHeap(Data* d, off64_t runLen, off64_t start) {
         bheap_pop(&(d->heap));
     }
     return (size_t) - 1;
-
-
-    //    st = bheap_peek(&(d->heap));
-    //    return st->k;
 }
 
 /* ----------------------------------------------------------------------------
@@ -814,7 +792,6 @@ static int heapComp(const void* a, const void* b) {
 
 
 //Deallocate heap structure - TODO: finish
-
 static boolean heap_elem_destroy(void *data) {
     return TRUE;
 }
