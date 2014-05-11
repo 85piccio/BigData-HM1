@@ -63,6 +63,7 @@ typedef struct {
     int errCode; /* operation error code */
 } Data;
 
+
 typedef unsigned long ItemType;
 
 typedef struct {
@@ -402,9 +403,6 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
     /* merge runs */
     for (;;) {
 
-        //
-
-
         /* get index of run containing the min item */
         size_t minRun = getMinRun(d, runLen, start);
 
@@ -474,8 +472,7 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
 
         /* all runs are empty */
         if (minRun == (size_t) - 1) break;
-        
-        fprintf(stdout, "%zd\t%zd\n", minRun,bheap_size(&(d->heap)));
+
 
         heapElem* stp = bheap_peek(&(d->heap));
         //        fprintf(stdout,"%lu\t%zd\n",*(ItemType*) stp->val, bheap_size(&(d->heap)));
@@ -531,6 +528,8 @@ static int initRuns(Data* d, off64_t runLen, off64_t start) {
         /* let p[q] be the index of the first item of the q-th run */
         d->offset[q] = start + q * runLen;
 
+        //        fprintf(stdout,"inserisco: %lu\n", *(ItemType*) _GetFrontItem(d, q));
+
 
         /* if index d->offset[q] points past the end of the file, skip read operation
            as the run is empty */
@@ -561,13 +560,12 @@ static int initRunsHeap(Data* d, off64_t runLen, off64_t start) {
 
         ts.offset = start + q * runLen;
         ts.k = q;
-        ts.val = _GetFrontHeapItem(d, ts); //puntatore al valore
-
-        bheap_push(&(d->heap), &ts);
 
         /* if index d->offset[q] points past the end of the file, skip read operation
            as the run is empty */
         if (ts.offset >= d->N) continue;
+
+
 
 
         /* set the file position to the beg inning of the q-th run */
@@ -580,6 +578,13 @@ static int initRunsHeap(Data* d, off64_t runLen, off64_t start) {
         if ((ts.offset + d->B > d->N && theReadItems != d->N % d->B) ||
                 (ts.offset + d->B <= d->N && theReadItems < d->B))
             return (d->errCode = FILE_READ_ERROR, 0);
+
+        ts.val = _GetFrontHeapItem(d, ts); //puntatore al valore
+        bheap_push(&(d->heap), &ts);
+        fprintf(stdout, "inserisco: %lu\n", *(ItemType*) ts.val);
+        heapElem *tss;
+        tss = bheap_peek(&(d->heap));
+        fprintf(stdout, "min heap: %lu\n", *(ItemType*) tss->val);
     }
 
     return 1;
@@ -639,11 +644,11 @@ static int nextFrontItemHeap(Data* d, off64_t runLen, off64_t start, size_t minR
     heapElem ts;
     ts.k = minRun;
     ts.offset = lshp->offset + 1;
-    ts.val = _GetFrontHeapItem(d, ts); //puntatore al valore
+
 
     bheap_pop(&(d->heap)); //delete last mim
     //    if (!_EmptyRunHeap(d, runLen, start, ts)) //aggiungo solo se valido CORRETTO?
-    bheap_push(&(d->heap), &ts); //re-add
+
 
     /* if the block is empty and the run is not empty, cache the next block */
     if (ts.offset % d->B == 0 && !_EmptyRunHeap(d, runLen, start, ts)) {
@@ -654,11 +659,15 @@ static int nextFrontItemHeap(Data* d, off64_t runLen, off64_t start, size_t minR
         /* read up to B consecutive items from source file */
         theReadItems = fread(_GetFrontHeapItem(d, ts), d->itemSize, d->B, d->src);
 
+
+
         /* check for file read error */
         if ((ts.offset + d->B > d->N && theReadItems != d->N % d->B) ||
                 (ts.offset + d->B <= d->N && theReadItems < d->B))
             return (d->errCode = FILE_READ_ERROR, 0);
     }
+    ts.val = _GetFrontHeapItem(d, ts); //puntatore al valore
+    bheap_push(&(d->heap), &ts); //re-add
     return 1;
 }
 
@@ -843,10 +852,6 @@ static int heapComp(const void* a, const void* b) {
     //    fprintf(stdout,"COMPAR:\t%d\t%d\t%d\n",*(ItemType*) p_right->val , *(ItemType*) p_left->val,*(ItemType*) p_right->val - *(ItemType*) p_left->val);
 
     return *(ItemType*) p_right->val - *(ItemType*) p_left->val;
-
-    //    return v_right -  v_left; // min-heap
-
-
 }
 
 
