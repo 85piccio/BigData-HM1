@@ -16,7 +16,7 @@ typedef unsigned long ItemType;
 
 // comparator for ItemType integers
 
-int compar(const void* a, const void* b) {
+int compar(const void* a, const void* b) {    
     return *(ItemType*) a - *(ItemType*) b;
 }
 

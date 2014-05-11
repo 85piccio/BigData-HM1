@@ -22,7 +22,6 @@
                    projectFiles="true">
       <itemPath>main.c</itemPath>
       <itemPath>multiwayMergesort.c</itemPath>
-      <itemPath>newfile.c</itemPath>
       <itemPath>heap_ib/testHeap.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -74,8 +73,6 @@
       </item>
       <item path="multiwayMergesort.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="newfile.c" ex="false" tool="0" flavor2="0">
-      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
@@ -114,8 +111,6 @@
       <item path="multiwayMergesort.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="multiwayMergesort.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="newfile.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
   </confs>

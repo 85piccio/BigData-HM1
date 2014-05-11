@@ -9,6 +9,7 @@
         <group>
             <file>file:/home/piccio/workspace/BigData-HM1/kwaymergesort/main.c</file>
             <file>file:/home/piccio/workspace/BigData-HM1/kwaymergesort/multiwayMergesort.c</file>
+            <file>file:/home/piccio/workspace/BigData-HM1/kwaymergesort/heap_ib/testHeap.c</file>
         </group>
     </open-files>
 </project-private>
