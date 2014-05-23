@@ -274,8 +274,8 @@ int kWayMergeSort(Data *d) {
     stopRun = runUsage.ru_utime;
 
     if (d->verb) {
-        fprintf(stdout, "Run Formation started at: %ld.%lds\n", startRun.tv_sec, startRun.tv_usec);
-        fprintf(stdout, "Run Formation ended at: %ld.%lds\n", stopRun.tv_sec, stopRun.tv_usec);
+        fprintf(stderr, "Run Formation started at: %ld.%lds\n", startRun.tv_sec, startRun.tv_usec);
+        fprintf(stderr, "Run Formation ended at: %ld.%lds\n", stopRun.tv_sec, stopRun.tv_usec);
 
         struct timeval totRun = timevaldiff(&stopRun, &startRun);
 
@@ -361,7 +361,7 @@ static int sortPasses(Data* d) {
         for (start = 0; start < d->N; start = start + runLen * d->k) {
             
             /* merge k consecutive sorted runs of runLen items starting at item j */
-            boolean useHeap = TRUE;
+            boolean useHeap = FALSE;
             if (!useHeap) {
                 if (!kMerge(d, runLen, start)) return 0;
             } else {
@@ -423,12 +423,12 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
     stopMerge = mergeUsage.ru_utime;
 
     if (d->verb) {
-        fprintf(stdout, "\nMerge started at: %ld.%lds\n", startMerge.tv_sec, startMerge.tv_usec);
-        fprintf(stdout, "Merge ended at: %ld.%lds\n", stopMerge.tv_sec, stopMerge.tv_usec);
+        fprintf(stderr, "\nMerge started at: %ld.%lds\n", startMerge.tv_sec, startMerge.tv_usec);
+        fprintf(stderr, "Merge ended at: %ld.%lds\n", stopMerge.tv_sec, stopMerge.tv_usec);
 
         struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
 
-        fprintf(stdout, "Merge time: %ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
+        fprintf(stdout, "Merge time:\t%ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
     }
 
     if (d->verb) fprintf(stderr, "\ncompleted merge of %lu sequences\n",
@@ -490,12 +490,12 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
     stopMerge = mergeUsage.ru_utime;
 
     if (d->verb) {
-        fprintf(stdout, "\nMerge started at: %ld.%lds\n", startMerge.tv_sec, startMerge.tv_usec);
-        fprintf(stdout, "Merge ended at: %ld.%lds\n", stopMerge.tv_sec, stopMerge.tv_usec);
+        fprintf(stderr, "\nMerge started at: %ld.%lds\n", startMerge.tv_sec, startMerge.tv_usec);
+        fprintf(stderr, "Merge ended at: %ld.%lds\n", stopMerge.tv_sec, stopMerge.tv_usec);
 
         struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
 
-        fprintf(stdout, "Merge time: %ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
+        fprintf(stdout, "Merge time: \t%ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
     }
 
 
