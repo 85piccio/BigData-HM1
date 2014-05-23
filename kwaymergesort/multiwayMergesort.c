@@ -361,7 +361,7 @@ static int sortPasses(Data* d) {
         for (start = 0; start < d->N; start = start + runLen * d->k) {
             
             /* merge k consecutive sorted runs of runLen items starting at item j */
-            boolean useHeap = FALSE;
+            boolean useHeap = TRUE;
             if (!useHeap) {
                 if (!kMerge(d, runLen, start)) return 0;
             } else {
@@ -428,7 +428,7 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
 
         struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
 
-        fprintf(stdout, "Merge time:\t%ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
+        fprintf(stdout, "Merge time:\t%ld.%ld\n", totMerge.tv_sec, totMerge.tv_usec);
     }
 
     if (d->verb) fprintf(stderr, "\ncompleted merge of %lu sequences\n",
@@ -495,7 +495,7 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
 
         struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
 
-        fprintf(stdout, "Merge time: \t%ld.%lds\n", totMerge.tv_sec, totMerge.tv_usec);
+        fprintf(stdout, "Merge time: \t%ld.%ld\n", totMerge.tv_sec, totMerge.tv_usec);
     }
 
 
