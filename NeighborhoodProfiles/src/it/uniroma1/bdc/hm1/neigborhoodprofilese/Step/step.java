@@ -18,9 +18,14 @@ public class step {
         
         HashSet<String> nextSet = new HashSet();
         
+        //****PER GRAFI DIRETTI
         //per ogni riga in input
             //se il primo elemeno è in kset
                 //add secondo elemento in nextSet
+        //****PER GRAFI NON DIRETTI
+        //per ogni riga in input
+            //se uno dei due elementi è in kset
+                //add altro elemento in nextSet
         
         return nextSet;
     }
