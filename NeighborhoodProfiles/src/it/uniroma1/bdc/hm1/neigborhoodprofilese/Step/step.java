@@ -34,6 +34,7 @@ public class step {
                     nextSet.add(part[1]);//add secondo elemento in nextSet
                 }
             }
+            
         }
         br.close();
 
