@@ -17,7 +17,7 @@ import java.util.HashSet;
  */
 public class step {
 
-    public static HashSet performance(HashSet kset, HashSet visited, String inputFile) throws FileNotFoundException, IOException {
+    public static HashSet perform(HashSet kset, HashSet visited, String inputFile) throws FileNotFoundException, IOException {
 
         HashSet<String> nextSet = new HashSet();
 
@@ -27,13 +27,13 @@ public class step {
         //****PER GRAFI DIRETTI
         while ((line = br.readLine()) != null) {//per ogni riga in input
             // process the line.
-            String part[] = line.split("\\s+");//TODO:checl split
+            String part[] = line.split("\\s+");
 
             if (part.length >= 2) {//se il primo elemeno è in kset
                 if (kset.contains(part[0])) {
                     if (!visited.contains(part[1])) {
                         nextSet.add(part[1]);//add secondo elemento in nextSet
-                        visited.add(part[1]);
+                        visited.add(part[1]);//add secondo elemento tra i già visitati
                     }
                 }
             }

@@ -39,7 +39,7 @@ public class NeighborhoodProfiles {
             System.out.print("Neighborhood profiles |N(v," + (i+1) + ")|\t");
 
             //  performance step
-            kset = step.performance(kset, visited, inputFile);
+            kset = step.perform(kset, visited, inputFile);
 
             //stampa dimensione step
             System.out.print(kset.size() + "\n");
