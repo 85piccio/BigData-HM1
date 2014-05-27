@@ -17,14 +17,15 @@ public class NeighborhoodProfiles {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
 
         //read input file n_nodo e kstep
-        Integer k = 5;
-        String inputFile = "dataset/facebook_combined.txt";
-        String nNodo = "0";
+        Integer k = 10;
+        String inputFile = "dataset/gplus_combined.txt";
+        String nNodo = "111135306200683567183";
 
         //neigborhood profile |N(v,i)|
         HashSet<String> kset = new HashSet();
@@ -35,12 +36,13 @@ public class NeighborhoodProfiles {
         //foreach step
         for (int i = 0; i < k; i++) {
 
-            System.out.println("Neighborhood profiles |N(v," + i + ")|\n");
+            System.out.print("Neighborhood profiles |N(v," + (i+1) + ")|\t");
 
             //  performance step
             kset = step.performance(kset, visited, inputFile);
 
-            System.out.println(kset.size() + "\n");
+            //stampa dimensione step
+            System.out.print(kset.size() + "\n");
             //  print kset --> |N(v,i)|
 //            for(String s: kset){
 //                System.out.println(s+"\t");
