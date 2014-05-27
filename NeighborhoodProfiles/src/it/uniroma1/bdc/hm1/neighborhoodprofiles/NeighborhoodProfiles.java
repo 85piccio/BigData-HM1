@@ -3,14 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package it.uniroma1.bdc.hm1.neighborhoodprofiles;
 
 import it.uniroma1.bdc.hm1.neigborhoodprofilese.Step.step;
 import java.io.IOException;
 import java.util.HashSet;
-
-
 
 /**
  *
@@ -23,34 +20,33 @@ public class NeighborhoodProfiles {
      */
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
-        
+
         //read input file n_nodo e kstep
-        Integer k = 6;
+        Integer k = 5;
         String inputFile = "dataset/facebook_combined.txt";
         String nNodo = "0";
-        
+
         //neigborhood profile |N(v,i)|
         HashSet<String> kset = new HashSet();
+        HashSet<String> visited = new HashSet();
         //add nodo da analizzare
         kset.add(nNodo);
+        visited.add(nNodo);
         //foreach step
-        for(int i = 0; i< k; i++){
-            
-            System.out.println("Neighborhood profiles |N(v," + i +")|\n" );
-            
+        for (int i = 0; i < k; i++) {
+
+            System.out.println("Neighborhood profiles |N(v," + i + ")|\n");
+
             //  performance step
-            kset = step.performance(kset, inputFile);
-            
+            kset = step.performance(kset, visited, inputFile);
+
+            System.out.println(kset.size() + "\n");
             //  print kset --> |N(v,i)|
-            for(String s: kset){
-                System.out.println(s+"\t");
-            }
-            
-            
-                        
-            
-        
+//            for(String s: kset){
+//                System.out.println(s+"\t");
+//            }
+
         }
     }
-    
+
 }
