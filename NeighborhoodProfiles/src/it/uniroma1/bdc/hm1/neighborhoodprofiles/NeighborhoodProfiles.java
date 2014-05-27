@@ -5,7 +5,7 @@
  */
 package it.uniroma1.bdc.hm1.neighborhoodprofiles;
 
-import it.uniroma1.bdc.hm1.neigborhoodprofilese.Step.step;
+import it.uniroma1.bdc.hm1.neigborhoodprofiles.Step.step;
 import java.io.IOException;
 import java.util.HashSet;
 
