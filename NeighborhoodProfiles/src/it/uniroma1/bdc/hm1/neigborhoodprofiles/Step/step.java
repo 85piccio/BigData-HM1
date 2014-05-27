@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.uniroma1.bdc.hm1.neigborhoodprofilese.Step;
+package it.uniroma1.bdc.hm1.neigborhoodprofiles.Step;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
