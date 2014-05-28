@@ -22,10 +22,16 @@ public class NeighborhoodProfiles {
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
 
+        
+        if(args.length<3){
+            System.out.println("input: neighborhoodprofiles.jar k inputFile idNodo");
+            return;
+        }
+
         //read input file n_nodo e kstep
-        Integer k = 10;
-        String inputFile = "dataset/gplus_combined.txt";
-        String nNodo = "111135306200683567183";
+        Integer k = new Integer(args[0]);
+        String inputFile = args[1];//"dataset/facebook_combined.txt";
+        String nNodo = args[2];
 
         //neigborhood profile |N(v,i)|
         HashSet<String> kset = new HashSet();
