@@ -405,7 +405,7 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
 
         struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
 
-        fprintf(stdout, "InitRuns time:\t%ld.%.6ld\n", totMerge.tv_sec, totMerge.tv_usec);
+        fprintf(stdout, "InitRuns time:\t%ld.%.6ld\t\t", totMerge.tv_sec, totMerge.tv_usec);
     }
     
 
@@ -468,9 +468,29 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
         d->errCode = CANT_ALLOCATE_HEAP;
         return 0;
     }
-
+    
+    /* initialize runs */
+    getrusage(RUSAGE_SELF, &mergeUsage);
+    startMerge = mergeUsage.ru_utime;
+    
     /* initialize runs */
     if (!initRunsHeap(d, runLen, start)) return 0;
+    
+    //HM1
+    getrusage(RUSAGE_SELF, &mergeUsage);
+    stopMerge = mergeUsage.ru_utime;
+    
+    if (d->verb) {
+        fprintf(stderr, "\nInitRuns started at: %ld.%lds\n", startMerge.tv_sec, startMerge.tv_usec);
+        fprintf(stderr, "InitRuns ended at: %ld.%lds\n", stopMerge.tv_sec, stopMerge.tv_usec);
+
+        struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
+
+        fprintf(stdout, "InitRuns time:\t%ld.%.6ld\t\t", totMerge.tv_sec, totMerge.tv_usec);
+    }
+    
+
+    
 
     //HM1-START MARGE
     getrusage(RUSAGE_SELF, &mergeUsage);
