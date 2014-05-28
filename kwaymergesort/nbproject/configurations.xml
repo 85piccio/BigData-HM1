@@ -22,7 +22,6 @@
                    projectFiles="true">
       <itemPath>main.c</itemPath>
       <itemPath>multiwayMergesort.c</itemPath>
-      <itemPath>heap_ib/testHeap.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -58,8 +57,6 @@
       <item path="heap_ib/bheap.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="heap_ib/bheap.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="heap_ib/testHeap.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="heap_ib/types.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -97,8 +94,6 @@
       <item path="heap_ib/bheap.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="heap_ib/bheap.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="heap_ib/testHeap.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="heap_ib/types.h" ex="false" tool="3" flavor2="0">
       </item>

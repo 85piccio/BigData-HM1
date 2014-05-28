@@ -279,7 +279,7 @@ int kWayMergeSort(Data *d) {
 
         struct timeval totRun = timevaldiff(&stopRun, &startRun);
 
-        fprintf(stdout, "Run Formation time: %ld.%lds\n", totRun.tv_sec, totRun.tv_usec);
+        fprintf(stdout, "Run Formation time: %ld.%.6ld s\n", totRun.tv_sec, totRun.tv_usec);
     }
 
     /* do remaining passes by repeatedly merging consecutive runs */
@@ -428,7 +428,7 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
 
         struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
 
-        fprintf(stdout, "Merge time:\t%ld.%ld\n", totMerge.tv_sec, totMerge.tv_usec);
+        fprintf(stdout, "Merge time:\t%ld.%.6ld\n", totMerge.tv_sec, totMerge.tv_usec);
     }
 
     if (d->verb) fprintf(stderr, "\ncompleted merge of %lu sequences\n",
@@ -495,7 +495,7 @@ static int kMergeHeap(Data* d, off64_t runLen, off64_t start) {
 
         struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
 
-        fprintf(stdout, "Merge time: \t%ld.%ld\n", totMerge.tv_sec, totMerge.tv_usec);
+        fprintf(stdout, "Merge time: \t%ld.%.6ld\n", totMerge.tv_sec, totMerge.tv_usec);
     }
 
 
