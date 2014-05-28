@@ -273,14 +273,14 @@ int kWayMergeSort(Data *d) {
     getrusage(RUSAGE_SELF, &runUsage);
     stopRun = runUsage.ru_utime;
 
-    if (d->verb) {
-        fprintf(stderr, "Run Formation started at: %ld.%lds\n", startRun.tv_sec, startRun.tv_usec);
-        fprintf(stderr, "Run Formation ended at: %ld.%lds\n", stopRun.tv_sec, stopRun.tv_usec);
-
-        struct timeval totRun = timevaldiff(&stopRun, &startRun);
-
-        fprintf(stdout, "Run Formation time: %ld.%.6ld s\n", totRun.tv_sec, totRun.tv_usec);
-    }
+//    if (d->verb) {
+//        fprintf(stderr, "Run Formation started at: %ld.%lds\n", startRun.tv_sec, startRun.tv_usec);
+//        fprintf(stderr, "Run Formation ended at: %ld.%lds\n", stopRun.tv_sec, stopRun.tv_usec);
+//
+//        struct timeval totRun = timevaldiff(&stopRun, &startRun);
+//
+//        fprintf(stdout, "Run Formation time: %ld.%.6ld s\n", totRun.tv_sec, totRun.tv_usec);
+//    }
 
     /* do remaining passes by repeatedly merging consecutive runs */
     if (!sortPasses(d)) goto cleanup;
@@ -390,7 +390,24 @@ static int kMerge(Data* d, off64_t runLen, off64_t start) {
     struct timeval startMerge, stopMerge;
 
     /* initialize runs */
+    getrusage(RUSAGE_SELF, &mergeUsage);
+    startMerge = mergeUsage.ru_utime;
+    
     if (!initRuns(d, runLen, start)) return 0;
+    
+    //HM1
+    getrusage(RUSAGE_SELF, &mergeUsage);
+    stopMerge = mergeUsage.ru_utime;
+    
+    if (d->verb) {
+        fprintf(stderr, "\nInitRuns started at: %ld.%lds\n", startMerge.tv_sec, startMerge.tv_usec);
+        fprintf(stderr, "InitRuns ended at: %ld.%lds\n", stopMerge.tv_sec, stopMerge.tv_usec);
+
+        struct timeval totMerge = timevaldiff(&stopMerge, &startMerge);
+
+        fprintf(stdout, "InitRuns time:\t%ld.%.6ld\n", totMerge.tv_sec, totMerge.tv_usec);
+    }
+    
 
     //HM1-START MARGE
     getrusage(RUSAGE_SELF, &mergeUsage);
