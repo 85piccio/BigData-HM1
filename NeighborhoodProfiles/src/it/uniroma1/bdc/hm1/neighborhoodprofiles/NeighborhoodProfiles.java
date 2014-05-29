@@ -24,14 +24,22 @@ public class NeighborhoodProfiles {
 
         
         if(args.length<3){
-            System.out.println("input: neighborhoodprofiles.jar k inputFile idNodo");
+            System.out.println("input: neighborhoodprofiles.jar k inputFile idNodo [buffer dimension]");
             return;
         }
 
         //read input file n_nodo e kstep
         Integer k = new Integer(args[0]);
-        String inputFile = args[1];//"dataset/facebook_combined.txt";
+        String inputFile = args[1];//"dataset/p2p-Gnutella3.txt";
         String nNodo = args[2];
+        
+        Integer bufDim = -1;
+        if(args.length >= 4 && args[3] != "")
+            bufDim = new Integer(args[3]);
+        
+        //all Neighborhood profiles
+        if(k < 0)
+            k = Integer.MAX_VALUE;
 
         //neigborhood profile |N(v,i)|
         HashSet<String> kset = new HashSet();
@@ -39,16 +47,26 @@ public class NeighborhoodProfiles {
         //add nodo da analizzare
         kset.add(nNodo);
         visited.add(nNodo);
+        
+        System.out.println("Neighborhood profiles |N(v,0)|\t1");
+        
         //foreach step
         for (int i = 0; i < k; i++) {
 
             System.out.print("Neighborhood profiles |N(v," + (i+1) + ")|\t");
 
             //  performance step
-            kset = step.perform(kset, visited, inputFile);
+            kset = step.perform(kset, visited, inputFile,bufDim);
 
             //stampa dimensione step
             System.out.print(kset.size() + "\n");
+            
+            if(kset.size() < 1){
+                System.out.println("No more neighborhood --> stop processing");
+                return;
+            }
+                
+            //Stampa elementi del set
             //  print kset --> |N(v,i)|
 //            for(String s: kset){
 //                System.out.println(s+"\t");

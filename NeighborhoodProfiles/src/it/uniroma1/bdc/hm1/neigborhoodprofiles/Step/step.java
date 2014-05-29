@@ -17,11 +17,15 @@ import java.util.HashSet;
  */
 public class step {
 
-    public static HashSet perform(HashSet kset, HashSet visited, String inputFile) throws FileNotFoundException, IOException {
+    public static HashSet perform(HashSet kset, HashSet visited, String inputFile, Integer bufDim) throws FileNotFoundException, IOException {
 
         HashSet<String> nextSet = new HashSet();
-
-        BufferedReader br = new BufferedReader(new FileReader(inputFile));
+        BufferedReader br;
+        if (bufDim < 0) {
+            br = new BufferedReader(new FileReader(inputFile));
+        } else {
+            br = new BufferedReader(new FileReader(inputFile), bufDim);
+        }
         String line;
 
         //****PER GRAFI DIRETTI
