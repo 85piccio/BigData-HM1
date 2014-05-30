@@ -20,10 +20,9 @@ public class NeighborhoodProfiles {
      * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
-        // TODO code application logic here
 
         if (args.length < 3) {
-            System.out.println("input: neighborhoodprofiles.jar k inputFile idNodo [d/u] [buffer dimension]");
+            System.out.println("input:\nneighborhoodprofiles.jar k inputFile idNodo [d/u] [buffer dimension]");
             return;
         }
 
@@ -35,12 +34,11 @@ public class NeighborhoodProfiles {
 
         Integer bufDim = -1;
 
-        if (args.length >= 4 && args[4] != "") {
-            graphType = args[4];
+        if (args.length >= 4 && args[3].compareTo("") != 0) {
+            graphType = args[3];
         }
-
-        if (args.length >= 5 && args[5] != "") {
-            bufDim = new Integer(args[5]);
+        if (args.length >= 5 && args[4].compareTo("") != 0) {
+            bufDim = new Integer(args[4]);
         }
 
         //all Neighborhood profiles
@@ -63,10 +61,12 @@ public class NeighborhoodProfiles {
             System.out.print("Neighborhood profiles |N(v," + (i + 1) + ")|\t");
 
             //  performance step
-            if (graphType.equals('d')) {
+            if (graphType.compareTo("d") == 0) {
                 kset = step.performDirectGraph(kset, visited, inputFile, bufDim);
-            } else {
+            } else if (graphType.compareTo("u") == 0) {
                 kset = step.performUndirectGraph(kset, visited, inputFile, bufDim);
+            } else {
+                System.out.println("paramentro non riconosciuto");
             }
 
             //stampa dimensione step
