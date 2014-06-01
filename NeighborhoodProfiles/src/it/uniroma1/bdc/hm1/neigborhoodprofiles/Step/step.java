@@ -20,11 +20,11 @@ public class step {
     public static HashSet performDirectGraph(HashSet kset, HashSet visited, String inputFile, Integer bufDim) throws FileNotFoundException, IOException {
 
         HashSet<String> nextSet = new HashSet();
-        BufferedReader br;
+        BufferedReader br;        
         if (bufDim < 0) {
             br = new BufferedReader(new FileReader(inputFile));
         } else {
-            br = new BufferedReader(new FileReader(inputFile), bufDim);
+            br = new BufferedReader(new FileReader(inputFile), bufDim );
         }
         String line;
 
@@ -53,7 +53,7 @@ public class step {
         if (bufDim < 0) {
             br = new BufferedReader(new FileReader(inputFile));
         } else {
-            br = new BufferedReader(new FileReader(inputFile), bufDim);
+            br = new BufferedReader(new FileReader(inputFile), bufDim * 1024);
         }
         String line;
 
