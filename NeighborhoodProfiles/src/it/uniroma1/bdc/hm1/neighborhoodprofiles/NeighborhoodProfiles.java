@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package it.uniroma1.bdc.hm1.neighborhoodprofiles;
 
 import it.uniroma1.bdc.hm1.neigborhoodprofiles.Step.NextNeighborhood;
@@ -10,16 +6,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
-/**
- *
- * @author piccio
- */
-public class NeighborhoodProfiles {
 
-    /**
-     * @param args the command line arguments
-     * @throws java.io.IOException
-     */
+public class NeighborhoodProfiles {
+    
+    
     public static void main(String[] args) throws IOException {
 
         if (args.length < 3) {
