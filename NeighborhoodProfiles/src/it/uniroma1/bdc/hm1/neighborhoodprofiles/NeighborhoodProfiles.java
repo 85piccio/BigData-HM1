@@ -5,7 +5,8 @@
  */
 package it.uniroma1.bdc.hm1.neighborhoodprofiles;
 
-import it.uniroma1.bdc.hm1.neigborhoodprofiles.Step.step;
+import it.uniroma1.bdc.hm1.neigborhoodprofiles.Step.NextNeighborhood;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
@@ -22,7 +23,7 @@ public class NeighborhoodProfiles {
     public static void main(String[] args) throws IOException {
 
         if (args.length < 3) {
-            System.out.println("input:\nneighborhoodprofiles.jar k inputFile idNodo [d/u] [buffer dimension]");
+            System.out.println("input:\nneighborhoodprofiles.jar k inputFile idNodo [d/u] [buffer size]");
             return;
         }
 
@@ -55,34 +56,54 @@ public class NeighborhoodProfiles {
 
         System.out.println("Neighborhood profiles |N(v,0)|\t1");
 
-        //foreach step
-        for (int i = 0; i < k; i++) {
+        long startTotTime = System.currentTimeMillis();//START
+        //foreach distance
+        int i;
+        for (i = 0; i < k; i++) {
 
             System.out.print("Neighborhood profiles |N(v," + (i + 1) + ")|\t");
 
-            //  performance step
+            long startTime = System.currentTimeMillis();//START
+            //  performe step
             if (graphType.compareTo("d") == 0) {
-                kset = step.performDirectGraph(kset, visited, inputFile, bufDim);
+                kset = NextNeighborhood.directGraph(kset, visited, inputFile, bufDim);
             } else if (graphType.compareTo("u") == 0) {
-                kset = step.performUndirectGraph(kset, visited, inputFile, bufDim);
+                kset = NextNeighborhood.undirectGraph(kset, visited, inputFile, bufDim);
             } else {
                 System.out.println("paramentro non riconosciuto");
             }
+            long runTime = System.currentTimeMillis() - startTime;//STOP
 
             //stampa dimensione step
-            System.out.print(kset.size() + "\n");
+            System.out.print(kset.size() + "\t" + runTime + "ms\n");
 
             if (kset.size() < 1) {
                 System.out.println("No more neighborhood --> stop processing");
-                return;
+                break;
             }
 
-            //Stampa elementi del set
-            //  print kset --> |N(v,i)|
+//            Stampa elementi del set
+//              print kset --> |N(v,i)|
 //            for(String s: kset){
 //                System.out.println(s+"\t");
 //            }
         }
-    }
 
-}
+        long runTotTime = System.currentTimeMillis() - startTotTime;//STOP
+
+        File f = new File(inputFile);
+        long fileSize = f.length(); //byte
+
+        if (bufDim < 0) {
+            bufDim = 8192;//default buffer size of BufferedReader class in kbyte
+        } else {
+            bufDim *= 1024;
+        }
+
+        System.out.println("STATS:");
+        System.out.println("\tFile lenght\t=\t" + fileSize + " byte");
+        System.out.println("\tBuffer size\t=\t" + bufDim + " byte");
+        System.out.println("\tI/O operation\t=\t" + fileSize / bufDim * i );
+        System.out.println("\tTotal time\t=\t" + runTotTime + "ms");
+    }
+}    

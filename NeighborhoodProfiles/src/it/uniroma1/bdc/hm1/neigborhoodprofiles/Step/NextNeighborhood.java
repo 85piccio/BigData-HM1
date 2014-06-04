@@ -15,9 +15,9 @@ import java.util.HashSet;
  *
  * @author piccio
  */
-public class step {
+public class NextNeighborhood {
 
-    public static HashSet performDirectGraph(HashSet kset, HashSet visited, String inputFile, Integer bufDim) throws FileNotFoundException, IOException {
+    public static HashSet directGraph(HashSet kset, HashSet visited, String inputFile, Integer bufDim) throws FileNotFoundException, IOException {
 
         HashSet<String> nextSet = new HashSet();
         BufferedReader br;        
@@ -46,7 +46,7 @@ public class step {
         return nextSet;
     }
 
-    public static HashSet performUndirectGraph(HashSet kset, HashSet visited, String inputFile, Integer bufDim) throws FileNotFoundException, IOException {
+    public static HashSet undirectGraph(HashSet kset, HashSet visited, String inputFile, Integer bufDim) throws FileNotFoundException, IOException {
 
         HashSet<String> nextSet = new HashSet();
         BufferedReader br;
