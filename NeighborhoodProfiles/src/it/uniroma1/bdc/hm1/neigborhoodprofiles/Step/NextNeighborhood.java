@@ -15,7 +15,7 @@ public class NextNeighborhood {
         HashSet<String> nextSet = new HashSet();
         BufferedReader br;        
         if (bufDim < 0) {
-            br = new BufferedReader(new FileReader(inputFile));
+            br = new BufferedReader(new FileReader(inputFile));// bufDim  8192
         } else {
             br = new BufferedReader(new FileReader(inputFile), bufDim );
         }
@@ -44,7 +44,7 @@ public class NextNeighborhood {
         HashSet<String> nextSet = new HashSet();
         BufferedReader br;
         if (bufDim < 0) {
-            br = new BufferedReader(new FileReader(inputFile));
+            br = new BufferedReader(new FileReader(inputFile));// bufDim  8192
         } else {
             br = new BufferedReader(new FileReader(inputFile), bufDim * 1024);
         }
