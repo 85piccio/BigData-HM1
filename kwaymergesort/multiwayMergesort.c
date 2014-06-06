@@ -307,8 +307,15 @@ cleanup:
 static int runFormation(Data* d) {
 
     size_t theReadItems;
+   
+    struct rusage runFormationUsage;
+    struct timeval startFormation, stopFormation;
+
 
     if (d->verb) fprintf(stderr, "\n-- Run formation pass ");
+        
+        getrusage(RUSAGE_SELF, &runFormationUsage);
+        startFormation = runFormationUsage.ru_utime;
 
     do {
 
@@ -328,8 +335,22 @@ static int runFormation(Data* d) {
         if (d->verb) fprintf(stderr, ".");
 
     } while (theReadItems == d->M);
+    
+    getrusage(RUSAGE_SELF, &runFormationUsage);
+    stopFormation = runFormationUsage.ru_utime;
 
-    if (d->verb) fprintf(stderr, " [done]\n");
+    if (d->verb)
+    {
+        fprintf(stderr, "Run Formation started at: %ld.%lds\n", startFormation.tv_sec, startFormation.tv_usec);
+        fprintf(stderr, "Run Formation ended at: %ld.%lds\n", stopFormation.tv_sec, stopFormation.tv_usec);
+
+        struct timeval totFormation = timevaldiff(&stopFormation, &startFormation);
+
+        fprintf(stderr, "Run Formation time:\t%ld.%.6ld\n\n", totFormation.tv_sec, totFormation.tv_usec);
+        fprintf(stdout, "Run Formation time:\t%ld.%.6ld\n\n", totFormation.tv_sec, totFormation.tv_usec);
+        
+        fprintf(stderr, " [done]\n");
+    }
 
     return 1;
 }
@@ -667,9 +688,7 @@ static int nextFrontItemHeap(Data* d, off64_t runLen, off64_t start, size_t minR
 
         /* read up to B consecutive items from source file */
         theReadItems = fread(_GetFrontHeapItem(d, ts), d->itemSize, d->B, d->src);
-
-
-
+        
         /* check for file read error */
         if ((ts.offset + d->B > d->N && theReadItems != d->N % d->B) ||
                 (ts.offset + d->B <= d->N && theReadItems < d->B))
@@ -812,11 +831,24 @@ static void swapFiles(Data* d) {
 //hm1 
 //Compute difference between two timeva value
 
+
 static struct timeval timevaldiff(struct timeval *a, struct timeval *b) {
-    struct timeval r;
+    /*struct timeval r;
     r.tv_sec = abs(a->tv_sec - b->tv_sec);
     r.tv_usec = abs(a->tv_usec - b->tv_usec);
-    return r;
+    return r;*/
+    
+    struct timeval diff;
+    long start,stop,t;
+    stop = a->tv_sec * 1000000 + a->tv_usec;
+    start = b->tv_sec * 1000000 + b->tv_usec;
+    t = stop - start;
+    
+    diff.tv_usec = t%1000000;
+    diff.tv_sec = t / 1000000;
+    
+    return diff;
+    
 }
 
 //struct heapElem _ Def ordinamento
